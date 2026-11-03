@@ -15,6 +15,10 @@ Albums show one uncropped photograph at a time. Use previous/next, arrow keys,
 when browsing manually or leaving the tab. Manual navigation keeps it paused
 for this tab until Play is pressed; reduced motion disables automatic startup. Click the photo or Enlarge for the
 fullscreen viewer; `f` toggles it and Escape or a downward swipe closes it.
+On touch screens, fullscreen gives the whole viewport to the photograph. Double-tap
+or use Zoom in for 2.5× magnification, then drag to inspect detail. Zoom out to
+resume swiping between photos or swipe-down dismissal. Tap either photo counter
+for First photo / Last photo; no long press is needed.
 Exit animates the photo back into its regular position. Paging and viewer entry/exit
 use gentle fades with reduced-motion support. Each album remembers its selected
 photo in this tab; switching away and back restores it. Album switching with j/k

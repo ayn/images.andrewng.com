@@ -1,0 +1,13 @@
+---
+const { viewer = false } = Astro.props;
+const id = viewer ? 'viewer-photo-jump' : 'inline-photo-jump';
+---
+<button class="photo-jump-toggle" popovertarget={id} aria-label="Jump to first or last photograph" title="First / last photograph">
+  {viewer ? <span id="position" aria-live="polite"></span> : <span data-slide-count aria-live="polite" aria-atomic="true">01 / 01</span>}
+  <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" aria-hidden="true"><path d="m3 4 3 3 3-3" /></svg>
+</button>
+<div id={id} class="photo-jump-menu" popover>
+  <p>Jump to photograph</p>
+  <button data-jump="first">First photo <span>01</span></button>
+  <button data-jump="last">Last photo <span>End</span></button>
+</div>

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { containImageRect, createPhotoTransitionGate, autoplayPermitted, rememberAutoplayPause, clearAutoplayPause } from '../src/photo-motion.mjs';
+import { containImageRect, createPhotoTransitionGate, clampPhotoPan, autoplayPermitted, rememberAutoplayPause, clearAutoplayPause } from '../src/photo-motion.mjs';
 
 test('return animation targets the drawn image, excluding contain letterboxing', () => {
   assert.deepEqual(containImageRect({ left: 100, top: 50, width: 800, height: 600 }, 400, 600), { left: 300, top: 50, width: 400, height: 600 });
@@ -40,4 +40,12 @@ test('autoplay starts on a fresh visit, pauses for the tab after interaction, an
   assert.equal(autoplayPermitted(false, storage), false);
   clearAutoplayPause(storage);
   assert.equal(autoplayPermitted(false, storage), true);
+});
+
+
+test('zoom panning keeps photo edges inside the viewport and centers axes that still fit', () => {
+  const viewport = { width: 390, height: 844 };
+  assert.deepEqual(clampPhotoPan({ x: 900, y: -900 }, { width: 390, height: 260 }, viewport, 2.5), { x: 292.5, y: 0 });
+  assert.deepEqual(clampPhotoPan({ x: -900, y: 900 }, { width: 390, height: 585 }, viewport, 2.5), { x: -292.5, y: 309.25 });
+  assert.deepEqual(clampPhotoPan({ x: 90, y: -90 }, { width: 390, height: 585 }, viewport, 1), { x: 0, y: 0 });
 });

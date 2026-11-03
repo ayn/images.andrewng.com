@@ -61,7 +61,14 @@ Keep those documents current when a workflow or architectural decision changes.
 - Remember the last selected photo per album in sessionStorage and URL state.
   Switching albums and back returns to that same photo. Disable j/k album switching
   in fullscreen: full page changes there feel jarring to the user.
-- Preserve image aspect ratios. No automatic crop or fake borders.
+- Preserve image aspect ratios. No automatic crop or fake borders. Explicit user
+  zoom may magnify and pan the photo inside the fullscreen viewport.
+- Touch fullscreen uses the entire viewport with floating safe-area-aware controls.
+  Double-tap or Zoom in magnifies 2.5×; dragging then pans instead of paging or
+  dismissing. Zoom out restores ordinary swipe behavior.
+- Tap the photo counter in either view for First photo / Last photo. Avoid long
+  presses: mobile Safari turns them into text selection. Edge jumps must not
+  animate a native scroll through every intervening photograph.
 - Avoid prominent technical copy, UI clutter, metadata overlays, or invented camera data.
 - No visible Flickr titles/descriptions or per-photo Flickr links. Generic accessible
   photo labels are fine. API acknowledgment lives in About while sync uses the API.
@@ -143,5 +150,6 @@ Keep those documents current when a workflow or architectural decision changes.
   originals storage integration; do not silently replace originals with Flickr previews.
 - `REQUIRE_ORIGINALS=1` makes missing source originals fail the build.
 - Do not claim production deployment or DNS setup until actually completed.
-- Deployment is currently on hold for Andrew’s final design review. Wait for his
-  instruction to resume; no assets have been published to Cloudflare.
+- Andrew approved deployment after the mobile fullscreen review on 2026-11-03,
+  accepting floating controls over portrait photos. Deployment remains Mac-driven;
+  verify the actual production status in docs/PROJECT_STATE.md.

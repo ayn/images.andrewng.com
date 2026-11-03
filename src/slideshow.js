@@ -58,7 +58,7 @@ if (slideshow) {
     if (!await request.ready(instant)) return;
     if (nativeTouch) {
       nativeNavigation = true;
-      track.scrollTo({ left: target * track.clientWidth, behavior: instant || reducedMotion.matches ? 'instant' : 'smooth' });
+      track.scrollTo({ left: target * track.clientWidth, behavior: instant || reducedMotion.matches || Math.abs(target - current) !== 1 ? 'instant' : 'smooth' });
       current = target;
       update();
       return;
@@ -110,6 +110,11 @@ if (slideshow) {
   slideshow.querySelector('.slideshow-controls').hidden = false;
   slideshow.querySelector('[data-slide-previous]').addEventListener('click', () => { pauseForInteraction(); go(requested - 1); });
   slideshow.querySelector('[data-slide-next]').addEventListener('click', () => { pauseForInteraction(); go(requested + 1); });
+  slideshow.querySelectorAll('[data-jump]').forEach(button => button.addEventListener('click', () => {
+    button.closest('[popover]').hidePopover();
+    pauseForInteraction();
+    go(button.dataset.jump === 'first' ? 0 : photos.length - 1);
+  }));
   play.addEventListener('click', () => { if (timer) pauseForInteraction(); else { clearAutoplayPause(); setPlaying(true); } });
   slideshow.querySelector('[data-slide-enlarge]').addEventListener('click', () => { pauseForInteraction(); photos[current].click(); });
   slideshow.addEventListener('click', event => { if (event.target.closest('[data-photo]')) pauseForInteraction(); });
@@ -133,7 +138,7 @@ if (slideshow) {
   window.addEventListener('portfolio:help-open', () => setPlaying(false));
   document.addEventListener('visibilitychange', () => { if (document.hidden) setPlaying(false); });
   document.addEventListener('keydown', event => {
-    if (document.querySelector('.viewer')?.open || event.altKey || event.ctrlKey || event.metaKey ||
+    if (document.querySelector('.viewer')?.open || document.querySelector('.photo-jump-menu:popover-open') || event.altKey || event.ctrlKey || event.metaKey ||
         event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
     if (event.key === 'j' || event.key === 'k') {
       event.preventDefault();
