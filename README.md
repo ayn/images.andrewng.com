@@ -11,10 +11,11 @@ or Flickr image servers. Photo captions and per-photo Flickr links are omitted;
 About contains the Flickr API acknowledgment while the API remains in use.
 
 Albums show one uncropped photograph at a time. Use previous/next, arrow keys,
-`h`/`k` (previous), `j`/`l` (next), `gg` (first), `G` (last), Home/End, or swipe to browse. Optional Play advances every six seconds and pauses
+`h` (previous photo), `l` (next photo), `j`/`k` (next/previous album), `gg` (first), `G` (last), Home/End, or swipe to browse. Optional Play advances every six seconds and pauses
 when browsing manually or leaving the tab. Click the photo or Enlarge for the
 fullscreen viewer; `f` toggles it and Escape closes it. Paging and viewer entry/exit
-use gentle fades with reduced-motion support. EXIF stays behind Details in a fixed
+use gentle fades with reduced-motion support. Each album remembers its selected
+photo in this tab; switching away and back restores it, including fullscreen mode. EXIF stays behind Details in a fixed
 space so the photograph never moves when toggled.
 
 ## Develop

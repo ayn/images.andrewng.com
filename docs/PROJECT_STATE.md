@@ -26,16 +26,18 @@ is intended to be https://images.andrewng.com.
   on desktop, with the extra space given to the photo; About also hides its repeated
   heading on desktop. Mobile keeps its headings. Footer copyright updates in browser JavaScript.
 - About links to the source repository, not the personal GitHub profile. Flickr
-  profile link removed. Instagram SVG component is ready; instagramUrl must be
-  set once Andrew supplies the confirmed handle. It is not guessed or rendered empty.
+  profile link removed. Instagram SVG links in navigation and About point to the
+  confirmed profile @ayn: https://www.instagram.com/ayn/.
 - Five albums with Selected Images at `/`, four `/albums/<slug>/` pages, About, 404,
   sitemap, canonical URLs, social metadata, and Cloudflare headers/old URL redirects.
 - Large, one-photo-at-a-time slideshow with a consistent viewing area, quiet
   previous/next controls, counter, optional Play, keyboard navigation, and touch
   swipe. The user explicitly rejected the mixed-aspect-ratio grid. Photos stay
   uncropped; clicking or Enlarge opens the existing viewer. Desktop sidebar and
-  mobile album navigation remain. Vi shortcuts work in both views: h/k previous,
-  j/l next, gg first, G last. Initial fullscreen focus goes to the photograph rather
+  mobile album navigation remain. Vi shortcuts work in both views: h/l previous/next photo,
+  j/k next/previous album, gg first photo, G last photo. Each album remembers its
+  selected photo via session storage and URL hash; fullscreen mode is preserved
+  across album switches. Initial fullscreen focus goes to the photograph rather
   than outlining Close; keyboard focus indicators remain on actual controls.
   f toggles the viewer and Escape closes it. Exit restores image focus rather than
   the enclosing link to prevent a clipped black focus outline at the slideshow edge.

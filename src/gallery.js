@@ -1,5 +1,6 @@
 import { createPhotoNavigation } from './navigation.mjs';
 import { renderExif } from './exif-format.mjs';
+import { restorePhotoIndex, rememberPhoto, navigateAlbum, wantsFullscreen } from './album-navigation.mjs';
 
 const navigate = createPhotoNavigation();
 const photos = [...document.querySelectorAll('[data-photo]')];
@@ -60,6 +61,7 @@ async function show(index, animate = true) {
     fadeTimer = setTimeout(() => previous.remove(), 420);
   } else image.style.opacity = '1';
   displayed = target;
+  rememberPhoto(photo.dataset.id);
   document.querySelector('#position').textContent = `${target + 1} / ${photos.length}`;
   const exif = JSON.parse(photo.dataset.exif || '{}');
   const hasExif = renderExif(details, exif);
@@ -73,6 +75,7 @@ function closeViewer() {
   closing = true;
   ++revision;
   if (displayed >= 0) current = displayed;
+  rememberPhoto(photos[current].dataset.id, { fullscreen: false });
   // Prepare the matching inline photograph underneath the closing overlay.
   window.dispatchEvent(new CustomEvent('portfolio:viewer-close', { detail: { index: current } }));
   viewer.classList.remove('is-visible');
@@ -90,6 +93,7 @@ photos.forEach((photo, index) => photo.addEventListener('click', async event => 
   image.focus({ preventScroll: true });
   viewer.getBoundingClientRect();
   viewer.classList.add('is-visible');
+  rememberPhoto(photo.dataset.id, { fullscreen: true });
 }));
 document.querySelector('.close').addEventListener('click', closeViewer);
 document.querySelector('.previous').addEventListener('click', () => show(current - 1));
@@ -115,6 +119,12 @@ viewer.addEventListener('close', () => {
 window.addEventListener('resize', () => { if (viewer.open && !closing) show(current, false); });
 viewer.addEventListener('keydown', event => {
   if (closing || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+  if (event.key === 'j' || event.key === 'k') {
+    event.preventDefault();
+    event.stopPropagation();
+    navigateAlbum(event.key === 'j' ? 1 : -1, true);
+    return;
+  }
   if (event.key === 'f') { event.preventDefault(); event.stopPropagation(); closeViewer(); return; }
   const index = navigate(event.key, current, photos.length);
   if (index === null) return;
@@ -131,3 +141,5 @@ stack.addEventListener('touchend', event => {
   if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) show(current + (dx < 0 ? 1 : -1));
   touch = null;
 }, { passive: true });
+
+if (photos.length && wantsFullscreen()) photos[restorePhotoIndex(photos)].click();

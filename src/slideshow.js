@@ -1,4 +1,5 @@
 import { createPhotoNavigation } from './navigation.mjs';
+import { restorePhotoIndex, rememberPhoto, navigateAlbum } from './album-navigation.mjs';
 
 const slideshow = document.querySelector('.slideshow');
 if (slideshow) {
@@ -9,8 +10,9 @@ if (slideshow) {
   const play = slideshow.querySelector('[data-slide-play]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const navigate = createPhotoNavigation();
-  let current = 0;
-  let requested = 0;
+  const initial = restorePhotoIndex(photos);
+  let current = initial;
+  let requested = initial;
   let revision = 0;
   let timer;
   let cleanup;
@@ -26,6 +28,7 @@ if (slideshow) {
   }
 
   function update() {
+    rememberPhoto(photos[current].dataset.id);
     const focused = photos.find(photo => photo === document.activeElement || photo.contains(document.activeElement));
     const imageFocused = document.activeElement?.tagName === 'IMG';
     counter.textContent = `${String(current + 1).padStart(2, '0')} / ${String(photos.length).padStart(2, '0')}`;
@@ -82,7 +85,7 @@ if (slideshow) {
     });
   }
 
-  slides[0].classList.add('is-active', 'is-visible');
+  slides[initial].classList.add('is-active', 'is-visible');
   track.classList.add('is-enhanced');
   slideshow.querySelector('.slideshow-controls').hidden = false;
   slideshow.querySelector('[data-slide-previous]').addEventListener('click', () => { setPlaying(false); go(requested - 1); });
@@ -106,6 +109,12 @@ if (slideshow) {
   document.addEventListener('keydown', event => {
     if (document.querySelector('.viewer')?.open || event.altKey || event.ctrlKey || event.metaKey ||
         event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+    if (event.key === 'j' || event.key === 'k') {
+      event.preventDefault();
+      setPlaying(false);
+      navigateAlbum(event.key === 'j' ? 1 : -1);
+      return;
+    }
     if (event.key === 'f') { event.preventDefault(); setPlaying(false); photos[current].click(); return; }
     const index = navigate(event.key, requested, photos.length);
     if (index === null) return;

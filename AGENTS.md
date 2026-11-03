@@ -27,7 +27,8 @@ Keep those documents current when a workflow or architectural decision changes.
 
 - White background, minimal, polished, responsive, photographs do the talking.
 - Instagram links use an inline SVG in navigation and About; use the confirmed
-  personal profile URL from site.config.mjs, never guess a handle.
+  personal profile URL from site.config.mjs, never guess a handle. Confirmed: @ayn,
+  https://www.instagram.com/ayn/.
 - About has Source on GitHub linking to this repository (not the personal GitHub
   profile) because the site source is public. Remove the Flickr profile link.
 - Copyright year is computed in browser JavaScript on each visit; build-time text
@@ -41,10 +42,13 @@ Keep those documents current when a workflow or architectural decision changes.
 - Default album presentation is a large, one-photo-at-a-time slideshow, not a grid.
   The user dislikes the visual mess of mixed aspect ratios in a grid. Keep manual
   previous/next, arrow keys, swipe, and optional Play (never autostart).
-- Keep vi navigation in slideshow and fullscreen: h/k previous, j/l next, gg first,
-  G last, f toggles the fullscreen viewer, Escape closes it. Preserve normal Tab focus indicators on controls. Opening the viewer
+- Keep vi navigation in slideshow and fullscreen: h previous photo, l next photo, gg first photo,
+  G last photo; j/k next/previous album; f toggles the fullscreen viewer, Escape closes it. Preserve normal Tab focus indicators on controls. Opening the viewer
   initially focuses the photograph, not Close; no focus outline around the photo.
   Restore focus to the inline image on exit, avoiding clipped anchor outlines.
+- Remember the last selected photo per album in sessionStorage and URL state.
+  Switching albums and back returns to that same photo; fullscreen mode persists
+  across j/k album switches.
 - Preserve image aspect ratios. No automatic crop or fake borders.
 - Avoid prominent technical copy, UI clutter, metadata overlays, or invented camera data.
 - No visible Flickr titles/descriptions or per-photo Flickr links. Generic accessible

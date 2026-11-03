@@ -7,8 +7,8 @@ export function createPhotoNavigation() {
     pendingG = key === 'g' && !first ? now : null;
     if (first || key === 'Home') return 0;
     if (key === 'G' || key === 'End') return count - 1;
-    if (['ArrowLeft', 'h', 'k'].includes(key)) return (current - 1 + count) % count;
-    if (['ArrowRight', 'j', 'l'].includes(key)) return (current + 1) % count;
+    if (['ArrowLeft', 'h'].includes(key)) return (current - 1 + count) % count;
+    if (['ArrowRight', 'l'].includes(key)) return (current + 1) % count;
     return null;
   };
 }

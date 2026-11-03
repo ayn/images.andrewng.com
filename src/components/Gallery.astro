@@ -7,7 +7,7 @@ const { album } = Astro.props;
       const largest = photo.sizes.at(-1);
       const preview = photo.sizes.find(size => Math.max(size.width, size.height) >= 1280) || largest;
       return <div class="slide" role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${album.photos.length}`}>
-        <a class="photograph" href={largest.src} data-photo data-full={largest.src}
+        <a class="photograph" href={largest.src} data-photo data-id={photo.id} data-full={largest.src}
           data-width={largest.width} data-height={largest.height} data-title={`Photograph ${index + 1} from ${album.title}`}
           data-srcset={photo.sizes.map(size => `${size.src} ${size.width}w`).join(', ')}
           data-exif={JSON.stringify(photo.exif || {})}

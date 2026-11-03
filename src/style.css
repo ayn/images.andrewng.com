@@ -134,3 +134,6 @@ body:has(.viewer[open]) { overflow: hidden; }
   .slide-track { height: calc(100svh - 175px); }
 }
 @media (min-width: 601px) and (max-width: 1000px) { .slide-track { height: calc(100svh - 150px); } }
+
+.close { display: inline-flex; align-items: center; gap: 12px; line-height: 1; }
+.close svg { display: block; flex: none; }
