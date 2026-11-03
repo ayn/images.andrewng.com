@@ -26,6 +26,9 @@ Keep those documents current when a workflow or architectural decision changes.
 ## Design requirements
 
 - White background, minimal, polished, responsive, photographs do the talking.
+- Final design uses a restrained serif name/heading with system Avenir Next UI,
+  consistently drawn SVG photo arrows, readable muted controls, and a mobile album
+  strip. Keep the selected album visible and gallery controls within the viewport.
 - Instagram links use an inline SVG in navigation and About; use the confirmed
   personal profile URL from site.config.mjs, never guess a handle. Confirmed: @ayn,
   https://www.instagram.com/ayn/. SVG is 22px with a larger click target; align its
@@ -39,8 +42,9 @@ Keep those documents current when a workflow or architectural decision changes.
   with that photo as the OG image. Preserve per-album memory and legacy hash links.
 - Browser/social titles put the brand first: Andrew Ng Images — Selected Images,
   Andrew Ng Images — Portraits, etc. Never use an unbranded album-only title.
-- Hide the repeated main album and About headings on desktop (keep accessible h1s); the
-  sidebar already identifies the album. Keep the visible heading on mobile.
+- Hide the repeated main album and About headings at every screen size (keep
+  accessible h1s). The underlined navigation link already identifies the page,
+  including on mobile.
 - No photograph total in the top-right page heading; the slideshow position
   indicator below the image is enough.
 - Default album presentation is a large, one-photo-at-a-time slideshow, not a grid.
@@ -139,3 +143,5 @@ Keep those documents current when a workflow or architectural decision changes.
   originals storage integration; do not silently replace originals with Flickr previews.
 - `REQUIRE_ORIGINALS=1` makes missing source originals fail the build.
 - Do not claim production deployment or DNS setup until actually completed.
+- Deployment is currently on hold for Andrew’s final design review. Wait for his
+  instruction to resume; no assets have been published to Cloudflare.

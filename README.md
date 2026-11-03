@@ -39,8 +39,8 @@ npm run dev
 ```
 
 The first run downloads the available photos and generates image variants.
-Later runs reuse the local cache. The dev server binds to **0.0.0.0:4327**, so it
-is reachable on the machine’s network interfaces, including Tailscale:
+Later runs reuse the local cache. The preview hides Astro’s developer toolbar
+so it shows the actual design. The dev server binds to **0.0.0.0:4327**, so it is reachable on the machine’s network interfaces, including Tailscale:
 
 http://aynstudio.tail23b3c.ts.net:4327
 
