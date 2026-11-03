@@ -156,11 +156,18 @@ pages. No server adapter, database, or frontend UI framework is needed.
 For builds using local originals, upload the prepared site from this computer:
 
 ```sh
-npx wrangler pages deploy dist --project-name images-andrewng-com
+npx wrangler pages deploy dist --project-name images-andrewng-com --branch main
 ```
 
-This requires Cloudflare authentication. Attach `images.andrewng.com` under the
-Pages project’s Custom domains before directing DNS there.
+The production project is **images-andrewng-com**, a Direct Upload project with
+production branch `main` and no Git connection. Its public URL is
+https://images-andrewng-com.pages.dev. `images.andrewng.com` is attached as a
+custom domain; it requires a CNAME to `images-andrewng-com.pages.dev` and active
+Cloudflare validation/TLS before serving production traffic there.
+
+Use `wrangler login` if local Cloudflare authentication has expired. Deployment
+requires Pages permissions; managing the hostname’s DNS requires separate DNS
+permissions or a manual change in the Cloudflare dashboard.
 
 Production deployment runs on the Mac, where the source JPEGs live. GitHub Actions
 only builds the public Flickr snapshot and runs tests for PR validation; it does
@@ -171,13 +178,13 @@ Rebuild after changing Flickr tags or visibility. A deployed snapshot remains
 public until replaced, including photos subsequently made private on Flickr.
 For continuing Flickr synchronization, use a daily build; Flickr documents a
 [24-hour API caching window](https://www.flickr.com/services/developer/api/).
-No scheduled job or production Cloudflare deployment is provisioned by this repo.
+No scheduled refresh job is provisioned. Production uploads run locally on the Mac.
 
 ## Public repository / private build inputs
 
 Only code and public album metadata belong in Git. Source photographs are not committed. `.env`, downloaded photos,
 originals, generated variants, build output, and caches are ignored. Put the API
-key in `.env` locally and in Cloudflare environment settings for hosted builds.
+key in ignored `.env` locally; Cloudflare receives only the prepared static output.
 Never put credentials in `site.config.mjs` or client JavaScript.
 
 - `src/layouts/Base.astro`: shared page layout and navigation.

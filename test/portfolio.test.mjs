@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { fetchAlbum, parseExif } from '../scripts/flickr.mjs';
 import { albumPath, loadPortfolio } from '../src/lib/data.mjs';
 import config from '../site.config.mjs';
@@ -103,5 +103,21 @@ test('share URLs render the selected photograph and canonical URL without JavaSc
     assert.ok(html.includes(`property="og:image" content="https://images.andrewng.com${social.src}"`));
     assert.ok(html.includes(`property="og:image:width" content="${social.width}"`));
     assert.ok(html.includes('name="twitter:card" content="summary_large_image"'));
+  }
+});
+
+
+test('every built page keeps executable scripts external for the production CSP', async () => {
+  const root = new URL('../dist/', import.meta.url);
+  const files = await readdir(root, { recursive: true });
+  const pages = files.filter(file => file.endsWith('.html'));
+  assert.ok(pages.length > 5);
+  for (const file of pages) {
+    const html = await readFile(new URL(file, root), 'utf8');
+    for (const script of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+      if (/type=["']application\/(?:ld\+)?json["']/.test(script[1])) continue;
+      assert.match(script[1], /\bsrc=["']\/_astro\//, `${file} has a script blocked by script-src self`);
+      assert.equal(script[2].trim(), '', `${file} has inline executable code`);
+    }
   }
 });

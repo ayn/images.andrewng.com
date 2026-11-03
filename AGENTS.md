@@ -132,6 +132,8 @@ Keep those documents current when a workflow or architectural decision changes.
   folder structure and its README belong in Git. Original files need their own backup.
 - `FLICKR_API_KEY` belongs in ignored `.env` locally or hosting environment settings.
 - Keep the browser free of API credentials. Flickr sync happens only at build time.
+- Keep `vite.build.assetsInlineLimit: 0`; production CSP allows only external
+  scripts from self. Small Astro scripts must not be inlined and blocked.
 - The public saved snapshot contains public photo metadata and the EXIF whitelist.
 - Check `git diff --cached` and tracked filenames before pushing. Preserve the
   exclusion test for credentials and JPEGs.
