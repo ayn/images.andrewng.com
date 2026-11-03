@@ -1,3 +1,4 @@
+import { createSocialCard } from './social-card.mjs';
 import { sync } from './sync.mjs';
 import { loadPortfolio } from '../src/lib/data.mjs';
 import { prepareImages } from './images.mjs';
@@ -13,6 +14,7 @@ try {
   const data = await loadPortfolio({ localImages: false });
   console.log(`Using Flickr snapshot from ${data.fetchedAt}`);
   await prepareImages(data);
+  await createSocialCard();
 } catch (error) {
   console.error(error.message);
   process.exitCode = 1;

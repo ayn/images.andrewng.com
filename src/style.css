@@ -142,3 +142,33 @@ body:has(.viewer[open]) { overflow: hidden; }
 .instagram-link-with-text { width: auto; height: auto; min-height: 32px; }
 .about-links > a { display: inline-flex; align-items: center; min-height: 32px; }
 @media (max-width: 600px) { .secondary { align-items: center; gap: 18px; } }
+
+.external-arrow { display: inline-block; vertical-align: -.12em; flex: none; }
+.slide-actions button { display: inline-flex; align-items: center; gap: 6px; }
+.is-enhanced .slide { background: #fff; }
+.is-enhanced .slide.is-leaving { z-index: 2; }
+.viewer-photo-stack { position: relative; isolation: isolate; touch-action: pan-x pinch-zoom; }
+.viewer-image-previous { position: absolute; inset: 0; display: grid; place-items: center; grid-template: minmax(0, 1fr) / minmax(0, 1fr); background: #fff; opacity: 1; transition: opacity 400ms cubic-bezier(.2,.65,.3,1); }
+.viewer-image-previous.is-fading { opacity: 0; }
+.viewer-image-previous > img { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; min-width: 0; min-height: 0; object-fit: contain; }
+.viewer.is-morphing { opacity: 1; background: transparent; }
+.viewer-top, .viewer-bottom, .viewer-stage > button { transition: opacity 180ms ease; }
+.viewer.is-morphing .viewer-top, .viewer.is-morphing .viewer-bottom, .viewer.is-morphing .viewer-stage > button { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .viewer-image-previous, .viewer-top, .viewer-bottom, .viewer-stage > button { transition: none; } }
+
+/* Let the browser own touch tracking, inertia, and snap points. Desktop keeps crossfades. */
+.slide-track.is-native { display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; touch-action: auto; }
+.slide-track.is-native .slide { display: block; opacity: 1; transition: none; z-index: auto; }
+.viewer-native-track { grid-area: 1 / 1; display: flex; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior: contain; touch-action: pan-x pinch-zoom; -webkit-overflow-scrolling: touch; }
+.viewer-native-track::-webkit-scrollbar { display: none; }
+.viewer-native-slide { flex: 0 0 100%; display: grid; place-items: center; grid-template: minmax(0, 1fr) / minmax(0, 1fr); width: 100%; height: 100%; min-width: 0; min-height: 0; scroll-snap-align: center; scroll-snap-stop: always; }
+.viewer-native-slide > img { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; min-width: 0; min-height: 0; object-fit: contain; }
+.viewer-native-slide > img:focus { outline: none; }
+.viewer.is-touch-dragging::backdrop { background: transparent; transition: none; }
+.viewer.is-touch-dragging .viewer-top, .viewer.is-touch-dragging .viewer-bottom, .viewer.is-touch-dragging .viewer-stage > button { opacity: calc(1 - var(--swipe-progress, 0)); }
+
+/* Keep the inline destination stationary when the modal releases scroll locking. */
+html { scrollbar-gutter: stable; }
+.viewer.is-morphing::backdrop { background: transparent; }
+
+.slide-track.is-restoring .slide { transition: none; }

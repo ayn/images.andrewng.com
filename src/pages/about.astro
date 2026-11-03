@@ -1,4 +1,5 @@
 ---
+import ExternalArrow from '../components/ExternalArrow.astro';
 import Base from '../layouts/Base.astro';
 import InstagramLink from '../components/InstagramLink.astro';
 import site from '../../site.config.mjs';
@@ -10,8 +11,8 @@ import site from '../../site.config.mjs';
     <p>People, places, and the details in between. These are a few of the things I’ve stopped to photograph over the years.</p>
     <div class="about-links">
       {site.instagramUrl && <InstagramLink href={site.instagramUrl} text />}
-      <a href="https://andrewng.com/">andrewng.com ↗</a>
-      <a href={site.sourceUrl}>Source on GitHub ↗</a>
+      <a href="https://andrewng.com/">andrewng.com <ExternalArrow /></a>
+      <a href={site.sourceUrl}>Source on GitHub <ExternalArrow /></a>
     </div>
     <div class="colophon">
       <h2>A little history</h2>
