@@ -13,9 +13,11 @@ export async function loadPortfolio({ localImages = true } = {}) {
   for (const album of data.albums) album.photos.unshift(...local.filter(photo => photo.albums.includes(album.slug)));
   if (localImages) {
     const images = JSON.parse(await readFile(resolve('.cache/images.json'), 'utf8'));
+    const exif = JSON.parse(await readFile(resolve('.cache/exif.json'), 'utf8'));
     for (const album of data.albums) for (const photo of album.photos) {
       if (!images[photo.id]?.length) throw new Error(`Missing prepared image ${photo.id}. Run npm run dev or npm run build.`);
       photo.sizes = images[photo.id];
+      if (exif[photo.id]) photo.exif = exif[photo.id];
     }
   }
   return data;

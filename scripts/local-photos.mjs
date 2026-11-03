@@ -17,6 +17,11 @@ export function formatLocalExif(tags = {}) {
   }).filter(([, value]) => value));
 }
 
+export async function readDisplayExif(bytes) {
+  const tags = await exifr.parse(bytes, ['Model', 'LensModel', 'FocalLength', 'FNumber', 'ExposureTime', 'ISO']) || {};
+  return formatLocalExif(tags);
+}
+
 async function* files(dir) {
   let entries;
   try { entries = await readdir(dir, { withFileTypes: true }); }

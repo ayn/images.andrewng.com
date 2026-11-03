@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, basename } from 'node:path';
 import sharp from 'sharp';
 import { loadLocalPhotos } from '../scripts/local-photos.mjs';
-import { buildVariants } from '../scripts/images.mjs';
+import { buildVariants, indexOriginals } from '../scripts/images.mjs';
 
 test('local JPEGs deduplicate across albums, preserve display EXIF, and produce 6K variants without embedded EXIF', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'images-portfolio-'));
@@ -30,4 +30,13 @@ test('local JPEGs deduplicate across albums, preserve display EXIF, and produce 
     assert.ok(Math.max(metadata.width, metadata.height) <= 6400);
     assert.ok(Math.abs(metadata.width / metadata.height - 6400 / 4266) < 0.005);
   }
+});
+
+test('Lightroom replacement files match Flickr IDs without matching partial IDs', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'images-overrides-'));
+  await writeFile(join(dir, 'sand-harbor_236208468.jpg'), 'fixture');
+  await writeFile(join(dir, 'not-a-match_1236208468.jpg'), 'fixture');
+  const matches = await indexOriginals(dir, ['236208468', '999']);
+  assert.equal(matches.size, 1);
+  assert.equal(basename(matches.get('236208468')), 'sand-harbor_236208468.jpg');
 });
