@@ -130,7 +130,7 @@ body:has(.viewer[open]) { overflow: hidden; }
 .about-links { align-items: center; flex-wrap: wrap; }
 
 @media (min-width: 601px) {
-  .site:has(.slideshow) .page-heading { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .site:has(.slideshow, .about) .page-heading { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .slide-track { height: calc(100svh - 175px); }
 }
 @media (min-width: 601px) and (max-width: 1000px) { .slide-track { height: calc(100svh - 150px); } }

@@ -34,7 +34,7 @@ Keep those documents current when a workflow or architectural decision changes.
   is only a no-JavaScript fallback.
 - Browser/social titles put the brand first: Andrew Ng Images — Selected Images,
   Andrew Ng Images — Portraits, etc. Never use an unbranded album-only title.
-- Hide the repeated main album heading on desktop (keep its accessible h1); the
+- Hide the repeated main album and About headings on desktop (keep accessible h1s); the
   sidebar already identifies the album. Keep the visible heading on mobile.
 - No photograph total in the top-right page heading; the slideshow position
   indicator below the image is enough.
