@@ -1,15 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
+import InstagramLink from '../components/InstagramLink.astro';
+import site from '../../site.config.mjs';
 ---
 <Base title="About" active="about">
   <div class="about">
     <p class="intro">A closer look.</p>
     <p>I’m Andrew, a photographer based in Taipei and San Francisco.</p>
     <p>People, places, and the details in between. These are a few of the things I’ve stopped to photograph over the years.</p>
-    <div class="about-links"><a href="https://www.flickr.com/photos/ayn/">Flickr ↗</a><a href="https://andrewng.com/">andrewng.com ↗</a></div>
+    <div class="about-links">
+      {site.instagramUrl && <InstagramLink href={site.instagramUrl} text />}
+      <a href="https://andrewng.com/">andrewng.com ↗</a>
+      <a href={site.sourceUrl}>Source on GitHub ↗</a>
+    </div>
     <div class="colophon">
       <h2>A little history</h2>
       <p>This portfolio was originally hosted by <a href="https://pullfolio.com/">Pullfolio</a>, a service I helped build to turn Flickr into photography websites. Pullfolio ran from 2009 to 2024. The service is gone; the photographs live on.</p>
+      <p class="service-note">This product uses the Flickr API but is not endorsed or certified by SmugMug, Inc.</p>
     </div>
   </div>
 </Base>

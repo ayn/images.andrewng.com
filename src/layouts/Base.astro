@@ -2,20 +2,23 @@
 import site from '../../site.config.mjs';
 import { albumPath } from '../lib/data.mjs';
 import Viewer from '../components/Viewer.astro';
+import InstagramLink from '../components/InstagramLink.astro';
 import '../style.css';
-const { title, active, image, count } = Astro.props;
+const { title, active, image } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url);
+const documentTitle = `Andrew Ng Images — ${title}`;
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} — Andrew Ng Photography</title>
+    <title>{documentTitle}</title>
     <meta name="description" content="Photographs by Andrew Ng. Portraits, landscapes, denim, and small things worth a closer look." />
     <link rel="canonical" href={canonical} />
-    <meta property="og:title" content={`${title} — Andrew Ng Photography`} />
+    <meta property="og:title" content={documentTitle} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Andrew Ng Images" />
     <meta property="og:url" content={canonical} />
     {image && <meta property="og:image" content={new URL(image, site.url)} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -31,14 +34,18 @@ const canonical = new URL(Astro.url.pathname, site.url);
         <nav class="secondary" aria-label="Information">
           <a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>About</a>
           <a href="https://andrewng.com/">Elsewhere ↗</a>
+          {site.instagramUrl && <InstagramLink href={site.instagramUrl} />}
         </nav>
-        <p class="copyright">© {new Date().getFullYear()} Andrew Ng</p>
+        <p class="copyright">© <span data-copyright-year>{new Date().getFullYear()}</span> Andrew Ng</p>
       </header>
       <main id="main">
-        <div class="page-heading"><h1>{title}</h1>{count !== undefined && <span>{count} photographs</span>}</div>
+        <div class="page-heading"><h1>{title}</h1></div>
         <slot />
       </main>
     </div>
     <Viewer />
+    <script>
+      import "../copyright.js";
+    </script>
   </body>
 </html>

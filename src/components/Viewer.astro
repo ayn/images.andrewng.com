@@ -5,12 +5,11 @@
   </div>
   <div class="viewer-stage">
     <button class="previous" aria-label="Previous photograph">←</button>
-    <img id="viewer-image" alt="" />
+    <div class="viewer-photo-stack"><img id="viewer-image" alt="" tabindex="-1" /></div>
     <button class="next" aria-label="Next photograph">→</button>
   </div>
   <div class="viewer-bottom">
-    <div class="viewer-links"><button class="details-toggle" aria-expanded="false" aria-controls="photo-details">Details</button><a id="photo-link" href="https://www.flickr.com/photos/ayn/" target="_blank" rel="noopener noreferrer">Flickr ↗</a></div>
-    <span id="photo-title"></span>
+    <div class="viewer-links"><button class="details-toggle" aria-expanded="false" aria-controls="photo-details">Details</button></div>
     <p id="photo-details" hidden></p>
   </div>
 </dialog>

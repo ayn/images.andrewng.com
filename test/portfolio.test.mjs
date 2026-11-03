@@ -53,18 +53,24 @@ test('API errors fail the sync without exposing credentials', async () => {
     error => !error.message.includes('secret'));
 });
 
-test('built album routes contain locally hosted responsive photos and Flickr links', async () => {
+test('built album routes show local responsive slides without Flickr captions or photo links', async () => {
   const data = await loadPortfolio();
   for (const album of data.albums) {
     const html = await readFile(new URL(`../dist${albumPath(album)}index.html`, import.meta.url), 'utf8');
-    assert.ok(html.includes(`<title>${album.title} — Andrew Ng Photography</title>`));
+    const title = `Andrew Ng Images — ${album.title}`;
+    assert.ok(html.includes(`<title>${title}</title>`));
     assert.equal((html.match(/<a\s[^>]*\bdata-photo(?:\s|=|>)/g) || []).length, album.photos.length);
     assert.ok(html.includes('src="/photos/'));
     assert.ok(html.includes('srcset="/photos/'));
+    assert.ok(html.includes('aria-roledescription="carousel"'));
+    assert.ok(html.includes('data-slide-track'));
+    assert.ok(html.includes('data-slide-next'));
     assert.ok(!html.includes('src="https://live.staticflickr.com'));
     assert.ok(!html.includes('api_key'));
     assert.ok(!html.includes('astro-island'));
-    for (const photo of album.photos) if (photo.href) assert.ok(html.includes(photo.href));
+    assert.ok(!html.includes('id="photo-title"'));
+    assert.ok(!html.includes('id="photo-link"'));
+    for (const photo of album.photos) if (photo.href) assert.ok(!html.includes(photo.href));
   }
 });
 

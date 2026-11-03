@@ -21,9 +21,28 @@ is intended to be https://images.andrewng.com.
 
 ## Implemented
 
+- Browser/social titles use Andrew Ng Images — <album>. The header no longer
+  shows a redundant photo total. Footer copyright updates in browser JavaScript.
+- About links to the source repository, not the personal GitHub profile. Flickr
+  profile link removed. Instagram SVG component is ready; instagramUrl must be
+  set once Andrew supplies the confirmed handle. It is not guessed or rendered empty.
 - Five albums with Selected Images at `/`, four `/albums/<slug>/` pages, About, 404,
   sitemap, canonical URLs, social metadata, and Cloudflare headers/old URL redirects.
-- Uncropped responsive gallery with quiet desktop sidebar and mobile navigation.
+- Large, one-photo-at-a-time slideshow with a consistent viewing area, quiet
+  previous/next controls, counter, optional Play, keyboard navigation, and touch
+  swipe. The user explicitly rejected the mixed-aspect-ratio grid. Photos stay
+  uncropped; clicking or Enlarge opens the existing viewer. Desktop sidebar and
+  mobile album navigation remain. Vi shortcuts work in both views: h/k previous,
+  j/l next, gg first, G last. Initial fullscreen focus goes to the photograph rather
+  than outlining Close; keyboard focus indicators remain on actual controls.
+  f toggles the viewer and Escape closes it. Exit restores image focus rather than
+  the enclosing link to prevent a clipped black focus outline at the slideshow edge.
+- Slideshow and viewer paging use CSS crossfades after image decoding; viewer
+  opening/closing fades too. Reduced motion skips animation. EXIF space is fixed
+  so Details never shifts the photograph. EXIF fades in/out over 650ms. Visible Flickr titles/descriptions and
+  EXIF uses photographic ƒ aperture notation, styled shutter fractions instead of
+  decimal subsecond durations, and a small ISO badge.
+  Per-photo source links are removed; About carries the API acknowledgment.
 - Viewer with keyboard arrows, Escape, focus restoration, swipes, responsive image
   selection, and hidden-by-default EXIF Details. Missing metadata is omitted.
 - Public-only Flickr sync with account scoping, AND tag matching, pagination,

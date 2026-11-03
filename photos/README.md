@@ -10,7 +10,7 @@ photos/flickr-overrides/236208468.jpg
 ```
 
 The build uses your re-export in every album containing that Flickr photo,
-preserves the existing title and Flickr link, and reads display EXIF from the new
+preserves its album membership and internal Flickr identity, and reads display EXIF from the new
 file when available. Export without the old frame or watermark if you want those
 removed. No automatic crop is applied. New source content produces new asset URLs,
 so browser caches do not keep showing the old version. These JPEGs are ignored by Git.
