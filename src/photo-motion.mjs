@@ -37,3 +37,10 @@ export function rememberAutoplayPause(storage) {
 export function clearAutoplayPause(storage) {
   try { (storage || globalThis.sessionStorage).removeItem(autoplayKey); } catch { /* Explicit Play still works. */ }
 }
+
+
+export function clampPhotoPan(pan, photo, viewport, scale) {
+  const maxX = Math.max(0, (photo.width * scale - viewport.width) / 2);
+  const maxY = Math.max(0, (photo.height * scale - viewport.height) / 2);
+  return { x: maxX ? Math.max(-maxX, Math.min(maxX, pan.x)) : 0, y: maxY ? Math.max(-maxY, Math.min(maxY, pan.y)) : 0 };
+}

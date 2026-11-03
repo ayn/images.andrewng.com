@@ -1,7 +1,7 @@
 import { createPhotoNavigation } from './navigation.mjs';
 import { renderExif } from './exif-format.mjs';
 import { restorePhotoIndex, rememberPhoto, wantsFullscreen } from './album-navigation.mjs';
-import { containImageRect, createPhotoTransitionGate } from './photo-motion.mjs';
+import { containImageRect, createPhotoTransitionGate, clampPhotoPan } from './photo-motion.mjs';
 
 const navigate = createPhotoNavigation();
 const transitions = createPhotoTransitionGate();
@@ -11,6 +11,7 @@ let image = document.querySelector('#viewer-image');
 const stack = document.querySelector('.viewer-photo-stack');
 const details = document.querySelector('#photo-details');
 const detailsToggle = document.querySelector('.details-toggle');
+const zoomToggle = document.querySelector('.zoom-toggle');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let current = 0;
 let displayed = -1;
@@ -29,6 +30,58 @@ let morphTarget;
 let targetVisibility;
 let morphParent;
 let morphSibling;
+let zoom = 1;
+let pan = { x: 0, y: 0 };
+let zoomBase;
+let lastTap;
+
+function imageSizes(photo, scale = 1) {
+  const width = nativeTouch ? window.innerWidth : window.innerWidth - (window.innerWidth > 600 ? 210 : 24);
+  const height = nativeTouch ? window.innerHeight : window.innerHeight - 200;
+  return `${Math.max(1, Math.ceil(Math.min(width, height * photo.dataset.width / photo.dataset.height) * scale))}px`;
+}
+
+function clearZoom() {
+  zoom = 1;
+  pan = { x: 0, y: 0 };
+  zoomBase = null;
+  lastTap = null;
+  stack.classList.remove('is-zoomed');
+  zoomToggle.setAttribute('aria-pressed', 'false');
+  zoomToggle.textContent = 'Zoom in';
+  image.style.removeProperty('transform');
+  image.style.removeProperty('transition');
+}
+
+function applyPan(next) {
+  pan = clampPhotoPan(next, zoomBase, stack.getBoundingClientRect(), zoom);
+  image.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
+}
+
+function toggleZoom(point) {
+  if (!nativeTouch || closing || !viewer.open) return;
+  transitions.cancel();
+  if (zoom > 1) {
+    clearZoom();
+    image.sizes = imageSizes(photos[current]);
+    return;
+  }
+  zoomBase = containImageRect(image.getBoundingClientRect(), image.naturalWidth, image.naturalHeight);
+  zoom = 2.5;
+  nativeNavigation = true;
+  nativeTrack.scrollLeft = current * nativeTrack.clientWidth;
+  stack.classList.add('is-zoomed');
+  zoomToggle.setAttribute('aria-pressed', 'true');
+  zoomToggle.textContent = 'Zoom out';
+  image.style.transition = reducedMotion.matches ? 'none' : 'transform 240ms cubic-bezier(.22,.61,.36,1)';
+  image.sizes = imageSizes(photos[current], zoom);
+  applyPan(point ? { x: (zoomBase.left + zoomBase.width / 2 - point.x) * (zoom - 1), y: (zoomBase.top + zoomBase.height / 2 - point.y) * (zoom - 1) } : { x: 0, y: 0 });
+}
+zoomToggle.addEventListener('click', () => toggleZoom());
+viewer.querySelectorAll('[data-jump]').forEach(button => button.addEventListener('click', () => {
+  button.closest('[popover]').hidePopover();
+  show(button.dataset.jump === 'first' ? 0 : photos.length - 1);
+}));
 
 function updateMetadata(target) {
   const photo = photos[target];
@@ -52,7 +105,7 @@ function ensureNativeTrack() {
     picture.loading = 'lazy';
     picture.alt = photo.dataset.title;
     picture.tabIndex = -1;
-    picture.sizes = `${Math.max(1, Math.floor(Math.min(window.innerWidth - 24, (window.innerHeight - 200) * photo.dataset.width / photo.dataset.height)))}px`;
+    picture.sizes = imageSizes(photo);
     picture.srcset = photo.dataset.srcset;
     picture.src = photo.dataset.full;
     picture.style.maxWidth = `min(100%, ${photo.dataset.width}px)`;
@@ -85,13 +138,14 @@ function ensureNativeTrack() {
 
 async function show(index, animate = true) {
   if (closing) return false;
+  clearZoom();
   current = (index + photos.length) % photos.length;
   const target = current;
   const request = transitions.request();
   const photo = photos[target];
   const prepared = nativeTouch ? ensureNativeTrack()[target] : new Image();
   prepared.loading = 'eager';
-  prepared.sizes = `${Math.max(1, Math.floor(Math.min(window.innerWidth - (window.innerWidth > 600 ? 210 : 24), (window.innerHeight - 200) * photo.dataset.width / photo.dataset.height, photo.dataset.width)))}px`;
+  prepared.sizes = imageSizes(photo);
   prepared.srcset = photo.dataset.srcset;
   prepared.src = photo.dataset.full;
   try { await prepared.decode(); } catch { /* Keep alt text available if a file cannot be decoded. */ }
@@ -103,7 +157,7 @@ async function show(index, animate = true) {
     image.id = 'viewer-image';
     if (viewer.open) {
       nativeNavigation = true;
-      nativeTrack.scrollTo({ left: target * nativeTrack.clientWidth, behavior: animate && !reducedMotion.matches ? 'smooth' : 'instant' });
+      nativeTrack.scrollTo({ left: target * nativeTrack.clientWidth, behavior: animate && Math.abs(target - displayed) === 1 && !reducedMotion.matches ? 'smooth' : 'instant' });
     }
     nativeImages[(target + 1) % photos.length].loading = 'eager';
     nativeImages[(target - 1 + photos.length) % photos.length].loading = 'eager';
@@ -156,6 +210,7 @@ function finishClose() {
 
 async function closeViewer() {
   if (!viewer.open || closing) return;
+  viewer.querySelectorAll('.photo-jump-menu:popover-open').forEach(menu => menu.hidePopover());
   closing = true;
   transitions.cancel();
   clearTimeout(fadeTimer);
@@ -237,6 +292,7 @@ function cleanupViewer() {
   viewer.style.removeProperty('background-color');
   viewer.style.removeProperty('--swipe-progress');
   viewer.classList.remove('is-visible', 'is-morphing', 'is-touch-dragging');
+  clearZoom();
   stack.querySelectorAll('.viewer-image-previous').forEach(previous => previous.remove());
   image.removeAttribute('style');
   if (nativeTouch) {
@@ -249,7 +305,7 @@ function cleanupViewer() {
 viewer.addEventListener('close', () => { if (!viewer.open && closing) cleanupViewer(); });
 window.addEventListener('resize', () => { if (viewer.open && !closing) show(current, false); });
 viewer.addEventListener('keydown', event => {
-  if (closing || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+  if (closing || viewer.querySelector('.photo-jump-menu:popover-open') || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
   if (event.key === 'd') { event.preventDefault(); event.stopPropagation(); if (!detailsToggle.hidden) detailsToggle.click(); return; }
   if (event.key === 'f') { event.preventDefault(); event.stopPropagation(); closeViewer(); return; }
   const index = navigate(event.key, current, photos.length);
@@ -276,12 +332,18 @@ stack.addEventListener('touchstart', event => {
   if (closing || event.touches.length !== 1) { touch = null; return; }
   clearTimeout(swipeRestoreTimer);
   transitions.cancel();
-  touch = { x: event.touches[0].clientX, y: event.touches[0].clientY, time: performance.now(), axis: null, dy: 0 };
+  touch = { x: event.touches[0].clientX, y: event.touches[0].clientY, time: performance.now(), axis: null, dy: 0, pan: { ...pan } };
 }, { passive: true });
 stack.addEventListener('touchmove', event => {
   if (!touch || closing || event.touches.length !== 1) return;
   const dx = event.touches[0].clientX - touch.x;
   const dy = event.touches[0].clientY - touch.y;
+  if (zoom > 1) {
+    if (event.cancelable) event.preventDefault();
+    image.style.transition = 'none';
+    applyPan({ x: touch.pan.x + dx, y: touch.pan.y + dy });
+    return;
+  }
   if (!touch.axis && Math.max(Math.abs(dx), Math.abs(dy)) > 7) touch.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
   if (touch.axis !== 'y') return; // Horizontal movement stays native scroll + snap.
   if (event.cancelable) event.preventDefault();
@@ -296,13 +358,27 @@ stack.addEventListener('touchmove', event => {
 }, { passive: false });
 stack.addEventListener('touchend', event => {
   if (!touch || closing) return;
+  const dx = event.changedTouches[0].clientX - touch.x;
   const dy = event.changedTouches[0].clientY - touch.y;
+  const now = performance.now();
+  if (Math.hypot(dx, dy) < 10 && now - touch.time < 300) {
+    const point = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY };
+    if (lastTap && now - lastTap.time < 320 && Math.hypot(point.x - lastTap.x, point.y - lastTap.y) < 32) {
+      if (event.cancelable) event.preventDefault();
+      toggleZoom(point);
+      lastTap = null;
+    } else lastTap = { ...point, time: now };
+    touch = null;
+    return;
+  }
+  lastTap = null;
+  if (zoom > 1) { touch = null; return; }
   const velocity = dy / Math.max(1, performance.now() - touch.time);
   if (touch.axis === 'y') {
     if (dy > Math.max(75, window.innerHeight * .18) || (dy > 28 && velocity > .55)) closeViewer();
     else resetSwipe();
   }
   touch = null;
-}, { passive: true });
+}, { passive: false });
 stack.addEventListener('touchcancel', () => { if (touch?.axis === 'y') resetSwipe(); touch = null; }, { passive: true });
 if (photos.length && wantsFullscreen()) photos[restorePhotoIndex(photos)].click();

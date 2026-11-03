@@ -129,9 +129,10 @@ horizontal page overflow were observed. Physical iOS/Safari QA remains useful.
 Production deployment is explicitly **Mac-driven**, not GitHub Actions-driven.
 Actions only validates PR builds/tests and must not publish the site.
 Cloudflare Pages production deployment/custom domain/DNS have **not** been configured.
-Andrew paused deployment for a final design pass; wait for his instruction to
-resume. Wrangler’s saved session failed to refresh and needs a new login. A login
-flow was started then cancelled when deployment was paused.
+Andrew paused deployment for a final design pass, then explicitly approved
+deployment after reviewing mobile fullscreen on 2026-11-03. He accepted floating
+controls over portrait photos as a reasonable compromise. Wrangler’s saved
+session failed to refresh, so a fresh browser authorization is required.
 Build locally and upload `dist/` if using local originals. Do not enable cloud Git
 builds for high-resolution sources until originals can be accessed securely there.
 
@@ -169,3 +170,20 @@ the viewport, and short landscape windows use compact sidebar spacing. About
 links and typography have tighter, consistent spacing. Astro’s development
 toolbar is disabled for clean previewing. Photo content, frames, EXIF privacy,
 and existing navigation/motion behavior remain intact.
+
+
+## Touch fullscreen and edge navigation
+
+Touch fullscreen uses the full viewport with floating controls and safe-area
+insets. The default view still fits the whole photograph; landscape shots on a
+portrait phone can only gain the removed side margins. For closer inspection,
+double-tap or Zoom in magnifies 2.5× and requests a suitable responsive source.
+Drag to pan within bounded edges while zoomed; photo paging and swipe-down
+dismissal resume after zooming out. Closing from zoom retains the return morph,
+and reopening starts fitted again. Embedded source frames remain unchanged.
+
+Long pressing is deliberately avoided because Safari starts selection. Both
+photo counters open a native First photo / Last photo menu instead. The counter
+and chevron stay on one line, including at 320px. First/last jumps are immediate
+on native tracks, without scrolling through the entire album. Desktop keyboard
+navigation remains unchanged. Andrew has now approved deployment.
