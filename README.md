@@ -209,3 +209,15 @@ Documentation-only commits may use `[skip ci] [skip deploy]`. GitHub recognizes
 `[skip ci]`; `[skip deploy]` is an instruction for the manual Mac deployment
 workflow, not a Cloudflare/GitHub Actions feature. No automated deploy exists.
 Code, image-pipeline, and configuration changes still require build/tests and CI.
+
+
+## Photo preloading
+
+Photo preloading uses an idle, low-priority rolling buffer: two photographs ahead
+and one behind in both slideshow views. Responsive sizes match the display rather
+than always requesting the largest file. Desktop fullscreen reuses prepared image
+elements in a six-entry cache. Neighboring albums warm only their remembered
+opening photo (or the first photo), plus the destination HTML; no whole album is
+downloaded. Background work pauses for hidden tabs and inactive views. When the
+browser exposes connection hints, Save-Data/2G disables speculation and 3G keeps
+only the next photo, without neighboring-album requests.

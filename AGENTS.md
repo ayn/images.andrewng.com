@@ -160,3 +160,15 @@ Keep those documents current when a workflow or architectural decision changes.
 - Andrew approved deployment after the mobile fullscreen review on 2026-11-03,
   accepting floating controls over portrait photos. Deployment remains Mac-driven;
   verify the actual production status in docs/PROJECT_STATE.md.
+
+
+## Photo preloading
+
+Photo preloading uses an idle, low-priority rolling buffer: two photographs ahead
+and one behind in both slideshow views. Responsive sizes match the display rather
+than always requesting the largest file. Desktop fullscreen reuses prepared image
+elements in a six-entry cache. Neighboring albums warm only their remembered
+opening photo (or the first photo), plus the destination HTML; no whole album is
+downloaded. Background work pauses for hidden tabs and inactive views. When the
+browser exposes connection hints, Save-Data/2G disables speculation and 3G keeps
+only the next photo, without neighboring-album requests.

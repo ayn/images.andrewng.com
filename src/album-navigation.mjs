@@ -32,7 +32,7 @@ export function albumDestination(paths, currentPath, direction, remembered = {})
   return remembered[path] ? photoPagePath(path, remembered[path]) : path;
 }
 
-function savedPhoto(path) {
+export function savedPhoto(path) {
   try { return sessionStorage.getItem(memoryKey(path)); } catch { return null; }
 }
 

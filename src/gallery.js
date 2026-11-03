@@ -1,3 +1,4 @@
+import { createPhotoBuffer, photoCache } from './photo-preload.mjs';
 import { createPhotoNavigation } from './navigation.mjs';
 import { renderExif } from './exif-format.mjs';
 import { restorePhotoIndex, rememberPhoto, wantsFullscreen } from './album-navigation.mjs';
@@ -34,6 +35,10 @@ let zoom = 1;
 let pan = { x: 0, y: 0 };
 let zoomBase;
 let lastTap;
+const buffer = createPhotoBuffer({
+  photos, sizesFor: imageSizes, imageFor: nativeTouch ? index => nativeImages?.[index] : undefined,
+  active: () => viewer.open && !closing && !document.hidden,
+});
 
 function imageSizes(photo, scale = 1) {
   const width = nativeTouch ? window.innerWidth : window.innerWidth - (window.innerWidth > 600 ? 210 : 24);
@@ -91,6 +96,7 @@ function updateMetadata(target) {
   const hasExif = renderExif(details, JSON.parse(photo.dataset.exif || '{}'));
   detailsToggle.hidden = !hasExif;
   details.hidden = !hasExif || detailsToggle.getAttribute('aria-expanded') !== 'true';
+  buffer.update(target);
 }
 
 function ensureNativeTrack() {
@@ -139,15 +145,17 @@ function ensureNativeTrack() {
 async function show(index, animate = true) {
   if (closing) return false;
   clearZoom();
+  buffer.pause();
   current = (index + photos.length) % photos.length;
   const target = current;
   const request = transitions.request();
   const photo = photos[target];
-  const prepared = nativeTouch ? ensureNativeTrack()[target] : new Image();
+  const prepared = nativeTouch ? ensureNativeTrack()[target] : photoCache.get(photo, imageSizes(photo), 'high');
   prepared.loading = 'eager';
+  prepared.fetchPriority = 'high';
   prepared.sizes = imageSizes(photo);
-  prepared.srcset = photo.dataset.srcset;
-  prepared.src = photo.dataset.full;
+  if (prepared.getAttribute('srcset') !== photo.dataset.srcset) prepared.srcset = photo.dataset.srcset;
+  if (prepared.getAttribute('src') !== photo.dataset.full) prepared.src = photo.dataset.full;
   try { await prepared.decode(); } catch { /* Keep alt text available if a file cannot be decoded. */ }
   if (!await request.ready() || closing) return false;
 
@@ -159,8 +167,12 @@ async function show(index, animate = true) {
       nativeNavigation = true;
       nativeTrack.scrollTo({ left: target * nativeTrack.clientWidth, behavior: animate && Math.abs(target - displayed) === 1 && !reducedMotion.matches ? 'smooth' : 'instant' });
     }
-    nativeImages[(target + 1) % photos.length].loading = 'eager';
-    nativeImages[(target - 1 + photos.length) % photos.length].loading = 'eager';
+    updateMetadata(target);
+    return true;
+  }
+  if (prepared === image) {
+    image.style.maxWidth = `min(100%, ${photo.dataset.width}px)`;
+    image.style.maxHeight = `min(100%, ${photo.dataset.height}px)`;
     updateMetadata(target);
     return true;
   }
@@ -212,6 +224,7 @@ async function closeViewer() {
   if (!viewer.open || closing) return;
   viewer.querySelectorAll('.photo-jump-menu:popover-open').forEach(menu => menu.hidePopover());
   closing = true;
+  buffer.pause();
   transitions.cancel();
   clearTimeout(fadeTimer);
   stack.querySelectorAll('.viewer-image-previous').forEach(previous => previous.remove());
@@ -263,6 +276,7 @@ photos.forEach((photo, index) => photo.addEventListener('click', async event => 
   image.focus({ preventScroll: true });
   viewer.getBoundingClientRect();
   viewer.classList.add('is-visible');
+  buffer.update(index);
   rememberPhoto(photo.dataset.id, { fullscreen: true });
   window.dispatchEvent(new Event('portfolio:viewer-open'));
 }));
@@ -304,6 +318,7 @@ function cleanupViewer() {
 }
 viewer.addEventListener('close', () => { if (!viewer.open && closing) cleanupViewer(); });
 window.addEventListener('resize', () => { if (viewer.open && !closing) show(current, false); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) buffer.pause(); else if (viewer.open && !closing) buffer.update(current); });
 viewer.addEventListener('keydown', event => {
   if (closing || viewer.querySelector('.photo-jump-menu:popover-open') || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
   if (event.key === 'd') { event.preventDefault(); event.stopPropagation(); if (!detailsToggle.hidden) detailsToggle.click(); return; }
