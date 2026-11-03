@@ -38,7 +38,7 @@ export function renderExif(container, exif) {
     const span = document.createElement('span');
     span.className = className;
     span.textContent = text;
-    if (label) span.setAttribute('aria-label', label);
+    if (label) { span.setAttribute('aria-label', label); span.setAttribute('role', 'img'); }
     return span;
   }
   for (const key of ['camera', 'lens', 'focalLength']) if (exif[key]) fields.push(field(exif[key], `exif-${key}`));
