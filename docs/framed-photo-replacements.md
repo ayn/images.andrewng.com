@@ -1,11 +1,14 @@
-# Lightroom replacements for framed photographs
+# Framed-photo audit (reference only)
+
+Andrew decided to keep these photographs as-is on 2026-11-03. Replacements are
+not planned; the information below is retained only for future reference.
 
 Visually audited all 101 unique portfolio photos on 2026-11-03. Nine have visible
 baked-in borders; all are in Objects. No other obvious frames were found.
 Capture times below are Flickr’s recorded camera times, without timezone conversion.
 Original camera filenames were not available in the Flickr metadata inspected.
 
-Find the matching capture in Lightroom and export a full-resolution JPEG without
+If replacements are ever wanted, find the matching capture in Lightroom and export a full-resolution JPEG without
 the frame/watermark into `photos/flickr-overrides/`, using the filename below.
 Keep camera/exposure metadata in the export; the web build strips embedded metadata
 from public images and exposes only the approved display fields. Run `npm run build`.

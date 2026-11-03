@@ -103,8 +103,9 @@ Keep those documents current when a workflow or architectural decision changes.
 - `photos/flickr-overrides/<flickr-id>.jpg` replaces a Flickr image everywhere,
   preserving its title, album membership, and Flickr link. Prefer source EXIF from
   the re-export. `ORIGINALS_DIR` can point to an external override folder instead.
-- The user plans Lightroom re-exports to remove baked-in frames and recover detail.
-  Example: https://flic.kr/p/mSCxN → 236208468, “Sherry’s Speedy Reduced”, Objects.
+- Andrew decided to keep the existing framed Flickr photos as-is; replacements
+  are too much work. Do not treat frame removal or Lightroom re-exports as pending
+  work. Keep the optional override workflow available if he changes his mind.
 - Generate web variants with long edges 640, 1280, 1920, 2560, 3840, 6144px, stopping
   at native resolution. Never upscale or claim 6K detail from a 1024px source.
 - Use responsive image selection in both gallery and viewer, including pixel density.

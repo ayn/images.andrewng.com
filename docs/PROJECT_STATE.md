@@ -99,14 +99,15 @@ the other six retain their native 5358–5616px long edge. The build generated 6
 new variants. Combined album counts are 51 / 19 / 15 / 23 / 17, with 101 unique
 photos total. Deployment output measured 94.9 MB. Source JPEGs remain ignored by
 Git; these photos exist only on the Mac and in locally generated build output.
-No Flickr re-export overrides were added yet, so the legacy photos still need
-originals or Lightroom re-exports to gain detail. Flickr’s official
+No Flickr re-export overrides were added. Andrew decided to keep the framed
+legacy photos as-is; Lightroom replacements are not planned. Their available
+resolution remains unchanged. Flickr’s official
 account-data export includes originals for Free accounts:
 https://blog.flickr.net/all/2025/04/15/service-update-original-large-size-download-limitations-on-free-accounts/
 
 The user identified https://flic.kr/p/mSCxN (236208468, “Sherry’s Speedy Reduced”,
-Objects) as an example needing an unframed, full-resolution Lightroom re-export.
-Save the replacement as `photos/flickr-overrides/236208468.jpg`.
+Objects) during the frame audit. He subsequently decided against replacing the
+framed photos because of the work involved.
 
 ## Preview and deployment status
 
@@ -138,8 +139,9 @@ is set, prepares photos, then builds Astro. `npm test` expects generated pages t
 exist. CI uses the saved public metadata without credentials. The source originals
 are deliberately absent from GitHub, so restoring them is required on a fresh machine.
 
-Remaining work: re-export the remaining low-resolution Flickr sources, visually review the design
-on desktop/mobile, and configure/deploy Cloudflare Pages when requested.
+Remaining work: visually review the design on desktop/mobile and configure/deploy
+Cloudflare Pages when requested. Keep the existing framed photos as-is; re-exporting
+legacy sources is not a pending task.
 
 Framed-photo audit: all 101 unique images reviewed in contact sheets; nine visible
 baked-in frames, all in Objects. Capture-time/replacement checklist lives in

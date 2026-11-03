@@ -52,8 +52,9 @@ https://images.andrewng.com regardless of the preview hostname.
 
 ### Replace old Flickr exports
 
-See the [framed-photo checklist](docs/framed-photo-replacements.md) for nine
-identified images, capture times to find them in Lightroom, and replacement filenames.
+The existing framed photos are intentionally kept as-is. The archived
+[frame audit](docs/framed-photo-replacements.md) records capture times and optional
+replacement filenames for future reference.
 
 Put Lightroom re-exports in `photos/flickr-overrides/<flickr-photo-id>.jpg`.
 For example, `photos/flickr-overrides/236208468.jpg` replaces https://flic.kr/p/mSCxN.
