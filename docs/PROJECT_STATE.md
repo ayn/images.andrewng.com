@@ -22,7 +22,8 @@ is intended to be https://images.andrewng.com.
 ## Implemented
 
 - Browser/social titles use Andrew Ng Images — <album>. The header no longer
-  shows a redundant photo total. Footer copyright updates in browser JavaScript.
+  shows a redundant photo total. The repeated main album heading is visually hidden
+  on desktop, with the extra space given to the photo; mobile keeps its heading. Footer copyright updates in browser JavaScript.
 - About links to the source repository, not the personal GitHub profile. Flickr
   profile link removed. Instagram SVG component is ready; instagramUrl must be
   set once Andrew supplies the confirmed handle. It is not guessed or rendered empty.
