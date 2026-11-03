@@ -1,3 +1,5 @@
+import { createPhotoBuffer } from './photo-preload.mjs';
+import { preloadNeighborAlbums } from './album-preload.mjs';
 import { createPhotoNavigation } from './navigation.mjs';
 import { createPhotoTransitionGate, autoplayPermitted, rememberAutoplayPause, clearAutoplayPause } from './photo-motion.mjs';
 import { restorePhotoIndex, rememberPhoto, navigateAlbum } from './album-navigation.mjs';
@@ -20,6 +22,19 @@ if (slideshow) {
   let cleanup;
   let nativeNavigation = false;
   let scrollTimer;
+  let cancelAlbums;
+  const browsing = () => !document.hidden && !document.querySelector('.viewer')?.open;
+  function imageSizes(photo) {
+    const data = photo.dataset || photo;
+    const { width, height } = track.getBoundingClientRect();
+    return `${Math.max(1, Math.floor(Math.min(width, height * data.width / data.height, data.width)))}px`;
+  }
+  const buffer = createPhotoBuffer({ photos, sizesFor: imageSizes, imageFor: index => photos[index].querySelector('img'), active: browsing });
+  function warmAlbums() {
+    cancelAlbums?.();
+    const image = photos[current].querySelector('img');
+    cancelAlbums = preloadNeighborAlbums({ sizesFor: imageSizes, ready: image.decode(), active: browsing });
+  }
 
   function setPlaying(playing) {
     clearInterval(timer);
@@ -44,16 +59,18 @@ if (slideshow) {
       slide.setAttribute('aria-hidden', String(index !== current));
       photos[index].tabIndex = index === current ? 0 : -1;
     });
-    photos[(current + 1) % photos.length].querySelector('img').loading = 'eager';
+    buffer.update(current);
   }
 
   async function go(index, instant = false) {
     const target = (index + photos.length) % photos.length;
     requested = target;
+    buffer.pause();
     const request = transitions.request();
     const next = slides[target];
     const image = photos[target].querySelector('img');
     image.loading = 'eager';
+    image.fetchPriority = 'high';
     try { await image.decode(); } catch { /* Let the browser display a failed image's alt text. */ }
     if (!await request.ready(instant)) return;
     if (nativeTouch) {
@@ -97,11 +114,7 @@ if (slideshow) {
   }
 
   function sizeImages() {
-    const { width, height } = track.getBoundingClientRect();
-    photos.forEach(photo => {
-      const displayed = Math.min(width, height * Number(photo.dataset.width) / Number(photo.dataset.height), Number(photo.dataset.width));
-      photo.querySelector('img').sizes = `${Math.max(1, Math.floor(displayed))}px`;
-    });
+    photos.forEach(photo => { photo.querySelector('img').sizes = imageSizes(photo); });
   }
 
   slides[initial].classList.add('is-active', 'is-visible');
@@ -136,7 +149,10 @@ if (slideshow) {
   }
   slideshow.addEventListener('focusin', event => { if (event.target !== play) setPlaying(false); });
   window.addEventListener('portfolio:help-open', () => setPlaying(false));
-  document.addEventListener('visibilitychange', () => { if (document.hidden) setPlaying(false); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { setPlaying(false); buffer.pause(); cancelAlbums?.(); }
+    else if (browsing()) { buffer.update(current); warmAlbums(); }
+  });
   document.addEventListener('keydown', event => {
     if (document.querySelector('.viewer')?.open || document.querySelector('.photo-jump-menu:popover-open') || event.altKey || event.ctrlKey || event.metaKey ||
         event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
@@ -159,11 +175,13 @@ if (slideshow) {
       if (!document.querySelector('.viewer')?.open) photos[current].querySelector('img').focus({ preventScroll: true });
     });
   });
-  window.addEventListener('portfolio:viewer-open', () => { pauseForInteraction(); transitions.cancel(); requested = current; });
+  window.addEventListener('portfolio:viewer-open', () => { pauseForInteraction(); transitions.cancel(); requested = current; buffer.pause(); cancelAlbums?.(); });
+  document.querySelector('.viewer')?.addEventListener('close', () => { buffer.update(current); warmAlbums(); });
   document.addEventListener('click', event => { if (event.target.closest('.sidebar a')) pauseForInteraction(); });
-  window.addEventListener('resize', sizeImages);
+  window.addEventListener('resize', () => { sizeImages(); if (browsing()) buffer.update(current); });
   sizeImages();
   if (nativeTouch) track.scrollLeft = initial * track.clientWidth;
   update();
+  warmAlbums();
   if (!document.hidden && autoplayPermitted(reducedMotion.matches)) setPlaying(true);
 }
