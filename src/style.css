@@ -147,7 +147,7 @@ body:has(.viewer[open]) { overflow: hidden; }
 .slide-actions button { display: inline-flex; align-items: center; gap: 6px; }
 .is-enhanced .slide { background: #fff; }
 .is-enhanced .slide.is-leaving { z-index: 2; }
-.viewer-photo-stack { position: relative; isolation: isolate; touch-action: pinch-zoom; }
+.viewer-photo-stack { position: relative; isolation: isolate; touch-action: pan-x pinch-zoom; }
 .viewer-image-previous { position: absolute; inset: 0; display: grid; place-items: center; grid-template: minmax(0, 1fr) / minmax(0, 1fr); background: #fff; opacity: 1; transition: opacity 400ms cubic-bezier(.2,.65,.3,1); }
 .viewer-image-previous.is-fading { opacity: 0; }
 .viewer-image-previous > img { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; min-width: 0; min-height: 0; object-fit: contain; }
