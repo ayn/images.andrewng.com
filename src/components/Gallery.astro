@@ -1,19 +1,35 @@
 ---
 const { album } = Astro.props;
 ---
-{album.photos.length ? <div class="gallery">
-  {album.photos.map((photo, index) => {
-    const largest = photo.sizes.at(-1);
-    const preview = photo.sizes.find(size => Math.max(size.width, size.height) >= 640) || largest;
-    return <a class="photograph" href={photo.href || largest.src} data-photo data-full={largest.src} data-flickr={photo.href || ''}
-      data-width={largest.width} data-height={largest.height} data-title={photo.title}
-      data-srcset={photo.sizes.map(size => `${size.src} ${size.width}w`).join(', ')}
-      data-exif={JSON.stringify(photo.exif || {})}
-      aria-label={`Open ${photo.title}`}>
-      <img src={preview.src} srcset={photo.sizes.map(size => `${size.src} ${size.width}w`).join(', ')}
-        sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1000px) calc((100vw - 240px) / 2), (max-width: 1500px) calc((100vw - 310px) / 2), 575px"
-        width={largest.width} height={largest.height} alt={photo.title}
-        loading={index < 2 ? 'eager' : 'lazy'} decoding="async" fetchpriority={index === 0 ? 'high' : 'auto'} />
-    </a>;
-  })}
-</div> : <p class="empty">There are no photographs in this collection yet.</p>}
+{album.photos.length ? <section class="slideshow" aria-roledescription="carousel" aria-label={`${album.title} photographs`}>
+  <div class="slide-track" data-slide-track tabindex="0" aria-label="Photographs — swipe or use arrow keys to browse">
+    {album.photos.map((photo, index) => {
+      const largest = photo.sizes.at(-1);
+      const preview = photo.sizes.find(size => Math.max(size.width, size.height) >= 1280) || largest;
+      return <div class="slide" role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${album.photos.length}`}>
+        <a class="photograph" href={largest.src} data-photo data-id={photo.id} data-full={largest.src}
+          data-width={largest.width} data-height={largest.height} data-title={`Photograph ${index + 1} from ${album.title}`}
+          data-srcset={photo.sizes.map(size => `${size.src} ${size.width}w`).join(', ')}
+          data-exif={JSON.stringify(photo.exif || {})}
+          tabindex={index === 0 ? 0 : -1} aria-label={`Enlarge photograph ${index + 1}`}>
+          <img src={preview.src} srcset={photo.sizes.map(size => `${size.src} ${size.width}w`).join(', ')}
+            sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1000px) calc(100vw - 240px), calc(100vw - 370px)"
+            style={`max-width: min(100%, ${largest.width}px); max-height: min(100%, ${largest.height}px)`}
+            width={largest.width} height={largest.height} alt={`Photograph ${index + 1} from ${album.title}`} tabindex="-1"
+            loading={index === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={index === 0 ? 'high' : 'auto'} />
+        </a>
+      </div>;
+    })}
+  </div>
+  <div class="slideshow-controls" hidden>
+    <div class="slide-pagination">
+      <button data-slide-previous aria-label="Previous photograph">←</button>
+      <span data-slide-count aria-live="polite" aria-atomic="true">01 / {String(album.photos.length).padStart(2, '0')}</span>
+      <button data-slide-next aria-label="Next photograph">→</button>
+    </div>
+    <div class="slide-actions"><button data-slide-play aria-pressed="false">Play</button><button data-slide-enlarge>Enlarge ↗</button></div>
+  </div>
+</section> : <p class="empty">There are no photographs in this collection yet.</p>}
+<script>
+  import '../slideshow.js';
+</script>

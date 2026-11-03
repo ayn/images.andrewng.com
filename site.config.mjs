@@ -1,6 +1,8 @@
 export default {
   name: 'Andrew Ng',
   url: 'https://images.andrewng.com',
+  instagramUrl: 'https://www.instagram.com/ayn/',
+  sourceUrl: 'https://github.com/ayn/images.andrewng.com',
   flickrUserId: '68826320@N00',
   albums: [
     { slug: 'selected-images', title: 'Selected Images', tags: ['pullfolio', 'selectedimages'] },

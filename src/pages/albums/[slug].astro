@@ -8,6 +8,6 @@ export async function getStaticPaths() {
 }
 const { album } = Astro.props;
 ---
-<Base title={album.title} active={album.slug} image={album.photos[0]?.sizes.at(-1).src} count={album.photos.length}>
+<Base title={album.title} active={album.slug} image={album.photos[0]?.sizes.at(-1).src}>
   <Gallery album={album} />
 </Base>

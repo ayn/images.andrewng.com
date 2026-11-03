@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import exifr from 'exifr';
 import sharp from 'sharp';
 import config from '../site.config.mjs';
+import { formatShutter } from '../src/exif-format.mjs';
 
 export function formatLocalExif(tags = {}) {
   const text = value => value == null ? '' : String(value).trim().slice(0, 180);
@@ -12,7 +13,7 @@ export function formatLocalExif(tags = {}) {
     camera: text(tags.Model), lens: text(tags.LensModel),
     focalLength: tags.FocalLength ? `${Number(tags.FocalLength)} mm` : '',
     aperture: tags.FNumber ? `f/${Number(tags.FNumber)}` : '',
-    shutter: shutter > 0 ? (shutter < 1 ? `1/${Math.round(1 / shutter)}s` : `${shutter}s`) : '',
+    shutter: shutter > 0 ? formatShutter(shutter).text : '',
     iso: text(tags.ISO),
   }).filter(([, value]) => value));
 }

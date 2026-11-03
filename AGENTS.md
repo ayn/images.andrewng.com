@@ -26,10 +26,42 @@ Keep those documents current when a workflow or architectural decision changes.
 ## Design requirements
 
 - White background, minimal, polished, responsive, photographs do the talking.
+- Instagram links use an inline SVG in navigation and About; use the confirmed
+  personal profile URL from site.config.mjs, never guess a handle. Confirmed: @ayn,
+  https://www.instagram.com/ayn/. SVG is 22px with a larger click target; align its
+  left edge with sidebar links and center it with adjacent text on mobile/About.
+- About has Source on GitHub linking to this repository (not the personal GitHub
+  profile) because the site source is public. Remove the Flickr profile link.
+- Copyright year is computed in browser JavaScript on each visit; build-time text
+  is only a no-JavaScript fallback.
+- Browser/social titles put the brand first: Andrew Ng Images — Selected Images,
+  Andrew Ng Images — Portraits, etc. Never use an unbranded album-only title.
+- Hide the repeated main album and About headings on desktop (keep accessible h1s); the
+  sidebar already identifies the album. Keep the visible heading on mobile.
+- No photograph total in the top-right page heading; the slideshow position
+  indicator below the image is enough.
+- Default album presentation is a large, one-photo-at-a-time slideshow, not a grid.
+  The user dislikes the visual mess of mixed aspect ratios in a grid. Keep manual
+  previous/next, arrow keys, swipe, and optional Play (never autostart).
+- Keep vi navigation in slideshow and fullscreen: h previous photo, l next photo, gg first photo,
+  G last photo; j/k next/previous album; d toggles EXIF Details in fullscreen; f toggles the fullscreen viewer, Escape closes it. Preserve normal Tab focus indicators on controls. Opening the viewer
+  initially focuses the photograph, not Close; no focus outline around the photo.
+  Restore focus to the inline image on exit, avoiding clipped anchor outlines.
+- Remember the last selected photo per album in sessionStorage and URL state.
+  Switching albums and back returns to that same photo; fullscreen mode persists
+  across j/k album switches.
 - Preserve image aspect ratios. No automatic crop or fake borders.
 - Avoid prominent technical copy, UI clutter, metadata overlays, or invented camera data.
+- No visible Flickr titles/descriptions or per-photo Flickr links. Generic accessible
+  photo labels are fine. API acknowledgment lives in About while sync uses the API.
+- Paging uses a gentle CSS crossfade after the next photo has decoded. Opening and
+  closing the viewer also fades. Respect reduced motion. Reserve EXIF space so
+  Details never moves or resizes the photograph. EXIF fades in and out at 650ms,
+  slower than the 400ms photo crossfade and 300ms viewer entry/exit.
 - Camera/lens/exposure EXIF is subtle, behind Details in the photo viewer.
 - Include camera, lens, focal length, aperture, shutter speed, ISO when available.
+  Use photographic typography: ƒ/2.8, raised/lowered shutter fractions (1/50s,
+  never 0.02 sec), and a small ISO badge with its value. Keep screen-reader labels.
 - Do not publish GPS or serial numbers. Generated images strip embedded EXIF;
   only whitelisted display fields are rendered separately.
 - About should mention this portfolio was originally hosted by Pullfolio and link
@@ -54,7 +86,8 @@ Keep those documents current when a workflow or architectural decision changes.
   at native resolution. Never upscale or claim 6K detail from a 1024px source.
 - Use responsive image selection in both gallery and viewer, including pixel density.
 - Deploy generated photo files with the static site on Cloudflare. Visitors must not
-  depend on Flickr API/image server requests. Imported photos retain Flickr links.
+  depend on Flickr API/image server requests. Flickr source links stay only in
+  internal snapshot metadata, not the photo presentation.
 
 ## Secrets and large files
 

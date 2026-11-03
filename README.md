@@ -1,13 +1,22 @@
 # images.andrewng.com
 
 Andrew Ng’s photography portfolio. A minimal white site with uncropped photographs,
-five albums, and an accessible photo viewer. Inspired by the personal site formerly
+five albums, a large slideshow, and an accessible photo viewer. Inspired by the personal site formerly
 hosted on Pullfolio; the About page links to [Pullfolio’s closing page](https://pullfolio.com/).
 
 Built with **Astro**, plain CSS, and vanilla JavaScript. Flickr supplies album
 membership at build time. **Sharp** prepares responsive JPEGs, which are included in
 the static Cloudflare Pages deployment. Visitors make no requests to the Flickr API
-or Flickr image servers. Imported Flickr photographs retain links to their Flickr pages.
+or Flickr image servers. Photo captions and per-photo Flickr links are omitted;
+About contains the Flickr API acknowledgment while the API remains in use.
+
+Albums show one uncropped photograph at a time. Use previous/next, arrow keys,
+`h` (previous photo), `l` (next photo), `j`/`k` (next/previous album), `gg` (first), `G` (last), Home/End, or swipe to browse. Optional Play advances every six seconds and pauses
+when browsing manually or leaving the tab. Click the photo or Enlarge for the
+fullscreen viewer; `f` toggles it and Escape closes it. Paging and viewer entry/exit
+use gentle fades with reduced-motion support. Each album remembers its selected
+photo in this tab; switching away and back restores it, including fullscreen mode. EXIF stays behind Details (or d in fullscreen) in a fixed
+space so the photograph never moves when toggled.
 
 ## Develop
 
@@ -36,7 +45,8 @@ https://images.andrewng.com regardless of the preview hostname.
 
 Put Lightroom re-exports in `photos/flickr-overrides/<flickr-photo-id>.jpg`.
 For example, `photos/flickr-overrides/236208468.jpg` replaces https://flic.kr/p/mSCxN.
-The replacement retains all existing album memberships, title, and Flickr link.
+The replacement retains all existing album memberships and internal Flickr identity;
+source titles and per-photo Flickr links are not shown.
 Its source EXIF takes precedence over Flickr's camera/exposure metadata. Filenames
 containing the ID, such as `sand-harbor_236208468.jpg`, are also supported.
 These full-resolution source files are ignored by Git. `ORIGINALS_DIR` can point
