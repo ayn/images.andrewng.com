@@ -7,5 +7,5 @@ export default defineConfig({
   devToolbar: { enabled: false },
   trailingSlash: 'always',
   server: { host: '0.0.0.0', port: 4327, allowedHosts: ['aynstudio.tail23b3c.ts.net'] },
-  vite: { server: { strictPort: true } },
+  vite: { server: { strictPort: true }, build: { assetsInlineLimit: 0 } },
 });

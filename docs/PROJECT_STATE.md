@@ -97,7 +97,9 @@ The first local import on 2026-11-03 added 11 unique full-resolution JPEGs acros
 files across albums share variants. Five sources support genuine 6144px variants;
 the other six retain their native 5358–5616px long edge. The build generated 66
 new variants. Combined album counts are 51 / 19 / 15 / 23 / 17, with 101 unique
-photos total. Deployment output measured 94.9 MB. Source JPEGs remain ignored by
+photos total. The initial gallery output measured 94.9 MB; the deployed site including static
+photo-sharing pages measured 101.6 MB across 392 files (390 uploaded assets plus
+Cloudflare headers/redirects), with a largest asset of 6.88 MB. Source JPEGs remain ignored by
 Git; these photos exist only on the Mac and in locally generated build output.
 No Flickr re-export overrides were added. Andrew decided to keep the framed
 legacy photos as-is; Lightroom replacements are not planned. Their available
@@ -128,11 +130,23 @@ horizontal page overflow were observed. Physical iOS/Safari QA remains useful.
 
 Production deployment is explicitly **Mac-driven**, not GitHub Actions-driven.
 Actions only validates PR builds/tests and must not publish the site.
-Cloudflare Pages production deployment/custom domain/DNS have **not** been configured.
+Cloudflare Pages project **images-andrewng-com** was created and deployed on
+2026-11-03 from this Mac, using the reviewed main branch after PR #7 merged.
+It is a Direct Upload project, production branch `main`, with no Git integration.
+Public project URL: https://images-andrewng-com.pages.dev.
+Initial deployment: `7e15f13a-ef47-420c-81b9-d500c600651c`,
+https://7e15f13a.images-andrewng-com.pages.dev.
+The Pages custom domain `images.andrewng.com` is attached. Andrew saved its
+CNAME to `images-andrewng-com.pages.dev`, and https://images.andrewng.com
+returned HTTP 200 with valid HTTPS. Wrangler’s OAuth session has Pages write
+but not DNS permissions, so DNS was updated manually. The latest Cloudflare
+control-plane status still says pending validation, with verification active;
+serving over the hostname is already working.
 Andrew paused deployment for a final design pass, then explicitly approved
 deployment after reviewing mobile fullscreen on 2026-11-03. He accepted floating
 controls over portrait photos as a reasonable compromise. Wrangler’s saved
-session failed to refresh, so a fresh browser authorization is required.
+session initially failed to refresh; Andrew completed a fresh browser authorization
+and the upload succeeded.
 Build locally and upload `dist/` if using local originals. Do not enable cloud Git
 builds for high-resolution sources until originals can be accessed securely there.
 
@@ -149,8 +163,8 @@ exist. CI uses the saved public metadata without credentials. The source origina
 are deliberately absent from GitHub, so restoring them is required on a fresh machine.
 
 Remaining work: Andrew’s final design review, optional physical iOS/Safari QA,
-and Cloudflare authentication/setup/deployment when requested. Keep the existing
-framed photos as-is; re-exporting legacy sources is not a pending task.
+and monitoring Cloudflare’s background custom-domain validation until active. Keep the
+existing framed photos as-is; re-exporting legacy sources is not a pending task.
 
 Framed-photo audit: all 101 unique images reviewed in contact sheets; nine visible
 baked-in frames, all in Objects. Capture-time/replacement checklist lives in
@@ -187,3 +201,11 @@ photo counters open a native First photo / Last photo menu instead. The counter
 and chevron stay on one line, including at 320px. First/last jumps are immediate
 on native tracks, without scrolling through the entire album. Desktop keyboard
 navigation remains unchanged. Andrew has now approved deployment.
+
+
+The first production browser check found that Astro inlined two small script
+entrypoints, which the existing `script-src self` policy correctly blocked.
+`vite.build.assetsInlineLimit` is now zero so every executable script stays in
+an external asset. A regression test checks every generated HTML page rather
+than relaxing the policy. All 27 tests pass. This setting must be preserved in
+future builds so copyright, album navigation, and keyboard help run in production.
