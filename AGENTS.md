@@ -22,6 +22,10 @@ Keep those documents current when a workflow or architectural decision changes.
   trivial visual edits or tests that simply repeat implementation details.
 - Use Node 24 per `.node-version`; Astro requires Node >=22.23.4.
 - Run `npm run build` before `npm test` because integration tests inspect built pages.
+- Documentation-only updates may use `[skip ci] [skip deploy]`; do not build or
+  upload for those changes. `[skip ci]` is GitHub-native; `[skip deploy]` governs
+  the manual agent workflow. Code/configuration changes still require CI.
+- Use `ayn@users.noreply.github.com` for public commit authors and squash merges.
 
 ## Design requirements
 
@@ -141,9 +145,10 @@ Keep those documents current when a workflow or architectural decision changes.
 ## Preview and deployment
 
 - Dev server must bind to **0.0.0.0:4327**, never just 127.0.0.1/localhost.
-- User’s preview: http://aynstudio.tail23b3c.ts.net:4327.
+- User’s preview: http://YOUR_PREVIEW_HOST:4327.
 - No Tailscale Serve or Funnel. The user connects directly from their tailnet.
-- Astro’s host allowlist includes aynstudio.tail23b3c.ts.net.
+- Preview hostnames come from `DEV_ALLOWED_HOSTS` in ignored `.env`; keep actual
+  device names, tailnet addresses, and absolute personal paths out of public files.
 - Deployment target: Cloudflare Pages, static `dist/`, no server adapter/database.
 - Production builds and deployments run on the Mac, where original JPEGs live.
   GitHub Actions only validates builds/tests; do not add automated deployments.

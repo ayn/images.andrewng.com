@@ -113,11 +113,11 @@ framed photos because of the work involved.
 
 ## Preview and deployment status
 
-Local checkout: `/Users/ayn/work/images.andrewng.com`.
-The old `/Users/ayn/work/pullfolio` repository is separate and back on master.
+Local checkout: `<checkout>`.
+The old `<legacy-checkout>` repository is separate and back on master.
 Astro dev was verified listening on `*:4327`; an HTTP request through its Tailscale
 IP with the requested hostname returned 200. Preview URL:
-http://aynstudio.tail23b3c.ts.net:4327
+http://YOUR_PREVIEW_HOST:4327
 
 The computer-use browser connector is unavailable, but the final design pass
 was reviewed with isolated headless Chrome via temporary Playwright tooling
@@ -139,9 +139,8 @@ https://7e15f13a.images-andrewng-com.pages.dev.
 The Pages custom domain `images.andrewng.com` is attached. Andrew saved its
 CNAME to `images-andrewng-com.pages.dev`, and https://images.andrewng.com
 returned HTTP 200 with valid HTTPS. Wrangler’s OAuth session has Pages write
-but not DNS permissions, so DNS was updated manually. The latest Cloudflare
-control-plane status still says pending validation, with verification active;
-serving over the hostname is already working.
+but not DNS permissions, so DNS was updated manually. Cloudflare subsequently confirmed the custom domain, verification, and HTTP
+validation are all active.
 Andrew paused deployment for a final design pass, then explicitly approved
 deployment after reviewing mobile fullscreen on 2026-11-03. He accepted floating
 controls over portrait photos as a reasonable compromise. Wrangler’s saved
@@ -162,9 +161,9 @@ is set, prepares photos, then builds Astro. `npm test` expects generated pages t
 exist. CI uses the saved public metadata without credentials. The source originals
 are deliberately absent from GitHub, so restoring them is required on a fresh machine.
 
-Remaining work: Andrew’s final design review, optional physical iOS/Safari QA,
-and monitoring Cloudflare’s background custom-domain validation until active. Keep the
-existing framed photos as-is; re-exporting legacy sources is not a pending task.
+The reviewed site is deployed and its custom hostname is active. Optional physical
+iOS/Safari follow-up remains useful. Keep the existing framed photos as-is;
+re-exporting legacy sources is not a pending task.
 
 Framed-photo audit: all 101 unique images reviewed in contact sheets; nine visible
 baked-in frames, all in Objects. Capture-time/replacement checklist lives in
@@ -209,3 +208,26 @@ entrypoints, which the existing `script-src self` policy correctly blocked.
 an external asset. A regression test checks every generated HTML page rather
 than relaxing the policy. All 27 tests pass. This setting must be preserved in
 future builds so copyright, album navigation, and keyboard help run in production.
+
+
+## Public repository audit and safeguards
+
+Gitleaks 8.30.1 found no secrets in all 165 historical blobs across 23 commits,
+or in published static assets. Direct comparison against the actual legacy Flickr
+credentials and current Cloudflare OAuth values found no matches in Git history.
+GitHub reports no secret-scanning alerts; secret scanning and push protection are
+already enabled. CI now also runs a pinned Gitleaks action over full history.
+
+The audit did find a personal author email in older commit metadata and private
+preview hostnames/local checkout paths in older public files. Future commits and
+squash merges use GitHub’s noreply address; current source uses generic path/host
+placeholders, with the real preview allowlist moved to ignored `.env`. Historical
+copies remain; removing them would require an explicit Git history rewrite.
+The public portfolio identity, Instagram handle, Flickr IDs, camera/exposure data,
+and source-site URLs are intentional public content, not claimed to be PII-free.
+
+Deployment after the CSP fix succeeded as `6ae10db9-b43f-4ecb-bdb9-aa3bfab9ea7a`.
+The real custom hostname passed first-party script, copyright, help, fullscreen,
+and zoom checks. Optional Cloudflare-injected analytics is blocked by the existing
+self-only script policy; it was not added to the allowlist. The deployed 6144px
+image bytes match the Mac-built image checksum.
