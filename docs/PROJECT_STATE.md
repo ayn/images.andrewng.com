@@ -28,19 +28,31 @@ is intended to be https://images.andrewng.com.
 - About links to the source repository, not the personal GitHub profile. Flickr
   profile link removed. Instagram SVG links in navigation and About point to the
   confirmed profile @ayn: https://www.instagram.com/ayn/.
+- Generic share previews use a generated 1200×630 branded OG card featuring an
+  actual portfolio photograph. Static `/albums/<slug>/<photo-id>/` pages provide
+  photo-specific OG/Twitter cards. Client selection updates the real URL; memory
+  is keyed by album root and legacy hash links remain supported.
 - Five albums with Selected Images at `/`, four `/albums/<slug>/` pages, About, 404,
   sitemap, canonical URLs, social metadata, and Cloudflare headers/old URL redirects.
 - Large, one-photo-at-a-time slideshow with a consistent viewing area, quiet
-  previous/next controls, counter, optional Play, keyboard navigation, and touch
+  previous/next controls, counter, automatic Play/Pause, keyboard navigation, and touch
   swipe. The user explicitly rejected the mixed-aspect-ratio grid. Photos stay
   uncropped; clicking or Enlarge opens the existing viewer. Desktop sidebar and
   mobile album navigation remain. Vi shortcuts work in both views: h/l previous/next photo,
-  j/k next/previous album outside fullscreen, gg first photo, G last photo. Each album remembers its
-  selected photo via session storage and URL hash. j/k album switching is disabled
+  j/k next/previous album outside fullscreen, gg/^ first photo, G/$ last photo. Each album remembers its
+  selected photo via session storage and static photo URL. j/k album switching is disabled
   in fullscreen because page changes there felt jarring. Initial fullscreen focus goes to the photograph rather
   than outlining Close; keyboard focus indicators remain on actual controls.
   f toggles the viewer, d toggles EXIF Details in fullscreen, and Escape closes it. Exit restores image focus rather than
   the enclosing link to prevent a clipped black focus outline at the slideshow edge.
+- Fresh visits autoplay until manual navigation; the paused state persists in the
+  tab until explicit Play. Reduced motion disables startup. SVG external arrows
+  render consistently on mobile/desktop. Touch paging uses native scroll/snap in
+  both views so frames follow the finger with native inertia. Vertical fullscreen
+  drags move the photo live, snap back if short, or dismiss if long/fast.
+- Fullscreen exit moves/scales the actual photo into its inline position. Rapid
+  paging uses decoded image elements and waits for the active transition, avoiding
+  clone reloads and white flashes from fading both scenes at once.
 - Slideshow and viewer paging use CSS crossfades after image decoding; viewer
   opening/closing fades too. Reduced motion skips animation. EXIF space is fixed
   so Details never shifts the photograph. EXIF fades in/out over 650ms. Flickr titles/descriptions are hidden.
@@ -77,12 +89,18 @@ is intended to be https://images.andrewng.com.
 The legacy API key works without OAuth as of this date even though Andrew no longer
 pays for Flickr Pro. That is a verified current result, not a future guarantee.
 Most Flickr photos expose only 1024px long-edge copies; some expose 2048px.
-Counts: Selected Images 44, Portraits 13, Landscape 13, Denim 23, Objects 17,
-90 unique photos total. Current preview uses those available files.
+Legacy Flickr counts: Selected Images 44, Portraits 13, Landscape 13, Denim 23,
+Objects 17, with 90 unique photos. Those older sources remain at Flickr resolution.
 
-True high-resolution display requires originals or Lightroom re-exports. No real
-local originals have been provided yet. A synthetic 6400px test source verifies
-the pipeline but does not improve existing portfolio photographs. Flickr’s official
+The first local import on 2026-11-03 added 11 unique full-resolution JPEGs across
+15 album placements: 7 Selected Images, 6 Portraits, and 2 Landscape. Duplicate
+files across albums share variants. Five sources support genuine 6144px variants;
+the other six retain their native 5358–5616px long edge. The build generated 66
+new variants. Combined album counts are 51 / 19 / 15 / 23 / 17, with 101 unique
+photos total. Deployment output measured 94.9 MB. Source JPEGs remain ignored by
+Git; these photos exist only on the Mac and in locally generated build output.
+No Flickr re-export overrides were added yet, so the legacy photos still need
+originals or Lightroom re-exports to gain detail. Flickr’s official
 account-data export includes originals for Free accounts:
 https://blog.flickr.net/all/2025/04/15/service-update-original-large-size-download-limitations-on-free-accounts/
 
@@ -120,5 +138,11 @@ is set, prepares photos, then builds Astro. `npm test` expects generated pages t
 exist. CI uses the saved public metadata without credentials. The source originals
 are deliberately absent from GitHub, so restoring them is required on a fresh machine.
 
-Remaining work: obtain actual high-resolution sources, visually review the design
+Remaining work: re-export the remaining low-resolution Flickr sources, visually review the design
 on desktop/mobile, and configure/deploy Cloudflare Pages when requested.
+
+Framed-photo audit: all 101 unique images reviewed in contact sheets; nine visible
+baked-in frames, all in Objects. Capture-time/replacement checklist lives in
+`docs/framed-photo-replacements.md`. Exit restores the inline photo before closing
+the dialog synchronously, escaping native-scroll clipping during the morph and
+keeping scrollbar space stable to avoid a final blink or layout shift.

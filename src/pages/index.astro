@@ -5,6 +5,6 @@ import { loadPortfolio } from '../lib/data.mjs';
 const { albums } = await loadPortfolio();
 const album = albums.find(album => album.slug === 'selected-images');
 ---
-<Base title={album.title} active={album.slug} image={album.photos[0]?.sizes.at(-1).src}>
+<Base title={album.title} active={album.slug}>
   <Gallery album={album} />
 </Base>

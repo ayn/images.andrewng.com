@@ -1,4 +1,5 @@
 ---
+import ExternalArrow from './ExternalArrow.astro';
 const { href, label = 'Instagram', text = false } = Astro.props;
 ---
 <a href={href} class:list={['instagram-link', { 'instagram-link-with-text': text }]} aria-label={label} title={label}>
@@ -7,5 +8,5 @@ const { href, label = 'Instagram', text = false } = Astro.props;
     <circle cx="12" cy="12" r="4" />
     <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
   </svg>
-  {text && <span>Instagram ↗</span>}
+  {text && <span>Instagram <ExternalArrow /></span>}
 </a>

@@ -1,8 +1,24 @@
+export function albumBasePath(path) {
+  const match = path.match(/^\/albums\/([^/]+)(?:\/[^/]+)?\/?$/);
+  if (!match) return path;
+  return match[1] === 'selected-images' ? '/' : `/albums/${match[1]}/`;
+}
+
+export function photoPagePath(album, id) {
+  const base = album === '/' ? '/albums/selected-images/' : album;
+  return `${base}${encodeURIComponent(id)}/`;
+}
+
+export function photoIdFromPath(path) {
+  const match = path.match(/^\/albums\/[^/]+\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 const memoryKey = path => `images:last-photo:${path}`;
 
-export function selectedPhotoIndex(ids, hash = '', savedId = null) {
+export function selectedPhotoIndex(ids, hash = '', savedId = null, routeId = null) {
   const explicit = new URLSearchParams(hash.replace(/^#/, '')).get('photo');
-  for (const id of [explicit, savedId]) {
+  for (const id of [routeId, explicit, savedId]) {
     const index = ids.indexOf(id);
     if (index >= 0) return index;
   }
@@ -10,12 +26,10 @@ export function selectedPhotoIndex(ids, hash = '', savedId = null) {
 }
 
 export function albumDestination(paths, currentPath, direction, remembered = {}) {
-  const current = paths.indexOf(currentPath);
+  const current = paths.indexOf(albumBasePath(currentPath));
   if (current < 0 || !paths.length) return null;
   const path = paths[(current + direction + paths.length) % paths.length];
-  const params = new URLSearchParams();
-  if (remembered[path]) params.set('photo', remembered[path]);
-  return path + (params.size ? `#${params}` : '');
+  return remembered[path] ? photoPagePath(path, remembered[path]) : path;
 }
 
 function savedPhoto(path) {
@@ -23,15 +37,16 @@ function savedPhoto(path) {
 }
 
 export function restorePhotoIndex(photos) {
-  return selectedPhotoIndex(photos.map(photo => photo.dataset.id), location.hash, savedPhoto(location.pathname));
+  return selectedPhotoIndex(photos.map(photo => photo.dataset.id), location.hash, savedPhoto(albumBasePath(location.pathname)), photoIdFromPath(location.pathname));
 }
 
 export function rememberPhoto(id, { fullscreen } = {}) {
   if (!id) return;
-  try { sessionStorage.setItem(memoryKey(location.pathname), id); } catch { /* URL state still works when storage is unavailable. */ }
+  try { sessionStorage.setItem(memoryKey(albumBasePath(location.pathname)), id); } catch { /* URL state still works when storage is unavailable. */ }
   const url = new URL(location.href);
   const params = new URLSearchParams(url.hash.slice(1));
-  params.set('photo', id);
+  url.pathname = photoPagePath(albumBasePath(url.pathname), id);
+  params.delete('photo');
   if (fullscreen === true) params.set('view', 'full');
   else if (fullscreen === false) params.delete('view');
   url.hash = params.toString();

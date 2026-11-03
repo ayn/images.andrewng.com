@@ -1,0 +1,17 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Gallery from '../../../components/Gallery.astro';
+import { loadPortfolio } from '../../../lib/data.mjs';
+
+export async function getStaticPaths() {
+  const { albums } = await loadPortfolio();
+  return albums.flatMap(album => album.photos.map(photo => ({
+    params: { slug: album.slug, photo: photo.id }, props: { album, photo },
+  })));
+}
+const { album, photo } = Astro.props;
+const social = photo.sizes.filter(size => Math.max(size.width, size.height) <= 2048).at(-1) || photo.sizes[0];
+---
+<Base title={album.title} active={album.slug} image={social.src} imageWidth={social.width} imageHeight={social.height}>
+  <Gallery album={album} />
+</Base>

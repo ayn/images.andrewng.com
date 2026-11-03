@@ -34,6 +34,9 @@ Keep those documents current when a workflow or architectural decision changes.
   profile) because the site source is public. Remove the Flickr profile link.
 - Copyright year is computed in browser JavaScript on each visit; build-time text
   is only a no-JavaScript fallback.
+- Build a branded 1200×630 OG card from actual portfolio images. Generic pages use
+  /og.jpg. Selected-photo sharing must use real static routes (not hash-only state),
+  with that photo as the OG image. Preserve per-album memory and legacy hash links.
 - Browser/social titles put the brand first: Andrew Ng Images — Selected Images,
   Andrew Ng Images — Portraits, etc. Never use an unbranded album-only title.
 - Hide the repeated main album and About headings on desktop (keep accessible h1s); the
@@ -42,9 +45,10 @@ Keep those documents current when a workflow or architectural decision changes.
   indicator below the image is enough.
 - Default album presentation is a large, one-photo-at-a-time slideshow, not a grid.
   The user dislikes the visual mess of mixed aspect ratios in a grid. Keep manual
-  previous/next, arrow keys, swipe, and optional Play (never autostart).
+  previous/next, arrow keys, swipe, and Play/Pause. Autoplay starts on a fresh visit, pauses after manual navigation,
+  stays paused for that tab until Play is pressed, and defaults off for reduced motion.
 - Keep vi navigation in slideshow and fullscreen: h previous photo, l next photo, gg first photo,
-  G last photo; j/k next/previous album outside fullscreen only; d toggles EXIF Details in fullscreen; f toggles the fullscreen viewer, Escape closes it. Preserve normal Tab focus indicators on controls. Opening the viewer
+  G last photo; ^ first photo and $ last photo are aliases in both views; j/k next/previous album outside fullscreen only; d toggles EXIF Details in fullscreen; f toggles the fullscreen viewer, Escape closes it. Preserve normal Tab focus indicators on controls. Opening the viewer
   initially focuses the photograph, not Close; no focus outline around the photo.
   Restore focus to the inline image on exit, avoiding clipped anchor outlines.
 - ? toggles a compact keyboard-help dialog in either view. Escape closes help
@@ -57,6 +61,17 @@ Keep those documents current when a workflow or architectural decision changes.
 - Avoid prominent technical copy, UI clutter, metadata overlays, or invented camera data.
 - No visible Flickr titles/descriptions or per-photo Flickr links. Generic accessible
   photo labels are fine. API acknowledgment lives in About while sync uses the API.
+- ^ and $ are first/last photo aliases, alongside gg/G and Home/End.
+- External/enlarge arrows are reusable SVGs, never emoji/text diagonal arrows.
+- On touch devices, use native horizontal scrolling and snap points in both views:
+  photos follow the finger, with browser momentum and neighboring frames visible.
+  Desktop keeps crossfades. Downward fullscreen drags move/scale the photo live;
+  short drags snap back and long/fast drags dismiss into the inline photo.
+- Rapid paging keeps the actual decoded outgoing image visible, waits for the
+  active crossfade, and commits only the newest request. Fade an opaque outgoing
+  scene, not two partially transparent images, to avoid white flashes.
+- Fullscreen exit morphs the displayed photo into the actual inline image bounds
+  (accounting for contain letterboxing), then restores inline visibility and focus.
 - Paging uses a gentle CSS crossfade after the next photo has decoded. Opening and
   closing the viewer also fades. Respect reduced motion. Reserve EXIF space so
   Details never moves or resizes the photograph. EXIF fades in and out at 650ms,

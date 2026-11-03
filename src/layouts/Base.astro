@@ -1,12 +1,14 @@
 ---
+import ExternalArrow from '../components/ExternalArrow.astro';
 import site from '../../site.config.mjs';
 import { albumPath } from '../lib/data.mjs';
 import Viewer from '../components/Viewer.astro';
 import KeyboardHelp from '../components/KeyboardHelp.astro';
 import InstagramLink from '../components/InstagramLink.astro';
 import '../style.css';
-const { title, active, image } = Astro.props;
+const { title, active, image, imageWidth = 1200, imageHeight = 630 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url);
+const socialImage = new URL(image || '/og.jpg', site.url);
 const documentTitle = `Andrew Ng Images — ${title}`;
 ---
 <!doctype html>
@@ -21,7 +23,13 @@ const documentTitle = `Andrew Ng Images — ${title}`;
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Andrew Ng Images" />
     <meta property="og:url" content={canonical} />
-    {image && <meta property="og:image" content={new URL(image, site.url)} />}
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:width" content={imageWidth} />
+    <meta property="og:image:height" content={imageHeight} />
+    <meta property="og:image:alt" content={image ? 'Photograph by Andrew Ng' : 'Andrew Ng Images — photography portfolio'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={documentTitle} />
+    <meta name="twitter:image" content={socialImage} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -34,7 +42,7 @@ const documentTitle = `Andrew Ng Images — ${title}`;
         </nav>
         <nav class="secondary" aria-label="Information">
           <a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>About</a>
-          <a href="https://andrewng.com/">Elsewhere ↗</a>
+          <a href="https://andrewng.com/">Elsewhere <ExternalArrow /></a>
           {site.instagramUrl && <InstagramLink href={site.instagramUrl} />}
         </nav>
         <p class="copyright">© <span data-copyright-year>{new Date().getFullYear()}</span> Andrew Ng</p>

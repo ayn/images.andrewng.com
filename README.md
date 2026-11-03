@@ -11,14 +11,21 @@ or Flickr image servers. Photo captions and per-photo Flickr links are omitted;
 About contains the Flickr API acknowledgment while the API remains in use.
 
 Albums show one uncropped photograph at a time. Use previous/next, arrow keys,
-`h` (previous photo), `l` (next photo), `j`/`k` (next/previous album), `gg` (first), `G` (last), Home/End, or swipe to browse. Optional Play advances every six seconds and pauses
-when browsing manually or leaving the tab. Click the photo or Enlarge for the
-fullscreen viewer; `f` toggles it and Escape closes it. Paging and viewer entry/exit
+`h` (previous photo), `l` (next photo), `j`/`k` (next/previous album), `gg`/`^` (first), `G`/`$` (last), Home/End, or swipe to browse. Autoplay advances every six seconds on a fresh visit and pauses
+when browsing manually or leaving the tab. Manual navigation keeps it paused
+for this tab until Play is pressed; reduced motion disables automatic startup. Click the photo or Enlarge for the
+fullscreen viewer; `f` toggles it and Escape or a downward swipe closes it.
+Exit animates the photo back into its regular position. Paging and viewer entry/exit
 use gentle fades with reduced-motion support. Each album remembers its selected
 photo in this tab; switching away and back restores it. Album switching with j/k
 is disabled in fullscreen to avoid disruptive page changes. Press ? for keyboard
 help; Escape dismisses help before leaving the viewer. EXIF stays behind Details (or d in fullscreen) in a fixed
 space so the photograph never moves when toggled.
+
+Photo selections use real static URLs such as `/albums/portraits/<photo-id>/`,
+so sharing the URL gives the selected photograph its own Open Graph preview.
+The root/album links use the branded 1200×630 card generated during preparation.
+Legacy `#photo=` links still open the correct image. Per-album memory is retained.
 
 ## Develop
 
@@ -44,6 +51,9 @@ https://images.andrewng.com regardless of the preview hostname.
 ## Albums
 
 ### Replace old Flickr exports
+
+See the [framed-photo checklist](docs/framed-photo-replacements.md) for nine
+identified images, capture times to find them in Lightroom, and replacement filenames.
 
 Put Lightroom re-exports in `photos/flickr-overrides/<flickr-photo-id>.jpg`.
 For example, `photos/flickr-overrides/236208468.jpg` replaces https://flic.kr/p/mSCxN.
@@ -88,7 +98,7 @@ writes the snapshot only after all five searches succeed.
 ## Correct missing EXIF
 
 `data/photo-overrides.json` stores confirmed per-photo corrections. Use the photo ID
-from the current page's `#photo=...` URL, for example:
+from the final segment of the current photo URL, for example:
 
 ```json
 { "photo-id": { "lens": "Your confirmed lens model" } }

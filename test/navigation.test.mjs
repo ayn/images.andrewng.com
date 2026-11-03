@@ -7,6 +7,8 @@ test('arrow and vi keys navigate photos with wraparound', () => {
   for (const key of ['ArrowLeft', 'h']) assert.equal(navigate(key, 0, 5), 4);
   for (const key of ['ArrowRight', 'l']) assert.equal(navigate(key, 4, 5), 0);
   assert.equal(navigate('Home', 3, 5), 0);
+  assert.equal(navigate('^', 3, 5), 0);
+  assert.equal(navigate('$', 0, 5), 4);
   assert.equal(navigate('G', 0, 5), 4);
   assert.equal(navigate('End', 0, 5), 4);
 });

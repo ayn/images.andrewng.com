@@ -87,3 +87,21 @@ test('snapshot contains all configured albums and no API credentials', async () 
     }
   }
 });
+
+
+test('share URLs render the selected photograph and canonical URL without JavaScript', async () => {
+  const { albums } = await loadPortfolio();
+  const root = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
+  assert.ok(root.includes('property="og:image" content="https://images.andrewng.com/og.jpg"'));
+  for (const album of albums) {
+    // Choose a non-leading photograph so a generic album card cannot accidentally pass.
+    const photo = album.photos.at(-1);
+    const path = `/albums/${album.slug}/${photo.id}/`;
+    const html = await readFile(new URL(`../dist${path}index.html`, import.meta.url), 'utf8');
+    const social = photo.sizes.filter(size => Math.max(size.width, size.height) <= 2048).at(-1) || photo.sizes[0];
+    assert.ok(html.includes(`rel="canonical" href="https://images.andrewng.com${path}"`));
+    assert.ok(html.includes(`property="og:image" content="https://images.andrewng.com${social.src}"`));
+    assert.ok(html.includes(`property="og:image:width" content="${social.width}"`));
+    assert.ok(html.includes('name="twitter:card" content="summary_large_image"'));
+  }
+});

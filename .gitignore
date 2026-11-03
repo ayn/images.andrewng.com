@@ -12,3 +12,5 @@ photos/**
 !photos/**/
 !photos/**/.gitkeep
 !photos/README.md
+
+public/og.jpg

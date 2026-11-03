@@ -5,8 +5,8 @@ export function createPhotoNavigation() {
     if (count < 1) return null;
     const first = key === 'g' && pendingG !== null && now - pendingG < 700;
     pendingG = key === 'g' && !first ? now : null;
-    if (first || key === 'Home') return 0;
-    if (key === 'G' || key === 'End') return count - 1;
+    if (first || key === 'Home' || key === '^') return 0;
+    if (key === 'G' || key === 'End' || key === '$') return count - 1;
     if (['ArrowLeft', 'h'].includes(key)) return (current - 1 + count) % count;
     if (['ArrowRight', 'l'].includes(key)) return (current + 1) % count;
     return null;
