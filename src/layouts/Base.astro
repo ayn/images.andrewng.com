@@ -2,6 +2,7 @@
 import site from '../../site.config.mjs';
 import { albumPath } from '../lib/data.mjs';
 import Viewer from '../components/Viewer.astro';
+import KeyboardHelp from '../components/KeyboardHelp.astro';
 import InstagramLink from '../components/InstagramLink.astro';
 import '../style.css';
 const { title, active, image } = Astro.props;
@@ -44,6 +45,7 @@ const documentTitle = `Andrew Ng Images — ${title}`;
       </main>
     </div>
     <Viewer />
+    <KeyboardHelp />
     <script>
       import "../copyright.js";
     </script>

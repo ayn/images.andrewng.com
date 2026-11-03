@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import config from '../../site.config.mjs';
+import { applyExifOverrides } from './exif-overrides.mjs';
 
 export const albumPath = album => album.slug === 'selected-images' ? '/' : `/albums/${album.slug}/`;
 export async function loadPortfolio({ localImages = true } = {}) {
@@ -20,5 +21,7 @@ export async function loadPortfolio({ localImages = true } = {}) {
       if (exif[photo.id]) photo.exif = exif[photo.id];
     }
   }
+  const overrides = JSON.parse(await readFile(resolve('data/photo-overrides.json'), 'utf8'));
+  applyExifOverrides(data.albums, overrides);
   return data;
 }

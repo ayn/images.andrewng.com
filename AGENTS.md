@@ -44,12 +44,15 @@ Keep those documents current when a workflow or architectural decision changes.
   The user dislikes the visual mess of mixed aspect ratios in a grid. Keep manual
   previous/next, arrow keys, swipe, and optional Play (never autostart).
 - Keep vi navigation in slideshow and fullscreen: h previous photo, l next photo, gg first photo,
-  G last photo; j/k next/previous album; d toggles EXIF Details in fullscreen; f toggles the fullscreen viewer, Escape closes it. Preserve normal Tab focus indicators on controls. Opening the viewer
+  G last photo; j/k next/previous album outside fullscreen only; d toggles EXIF Details in fullscreen; f toggles the fullscreen viewer, Escape closes it. Preserve normal Tab focus indicators on controls. Opening the viewer
   initially focuses the photograph, not Close; no focus outline around the photo.
   Restore focus to the inline image on exit, avoiding clipped anchor outlines.
+- ? toggles a compact keyboard-help dialog in either view. Escape closes help
+  first without leaving fullscreen. Block photo/album shortcuts while help is open,
+  preserve native Tab focus, pause autoplay, and restore focus on dismissal.
 - Remember the last selected photo per album in sessionStorage and URL state.
-  Switching albums and back returns to that same photo; fullscreen mode persists
-  across j/k album switches.
+  Switching albums and back returns to that same photo. Disable j/k album switching
+  in fullscreen: full page changes there feel jarring to the user.
 - Preserve image aspect ratios. No automatic crop or fake borders.
 - Avoid prominent technical copy, UI clutter, metadata overlays, or invented camera data.
 - No visible Flickr titles/descriptions or per-photo Flickr links. Generic accessible
@@ -62,6 +65,11 @@ Keep those documents current when a workflow or architectural decision changes.
 - Include camera, lens, focal length, aperture, shutter speed, ISO when available.
   Use photographic typography: ƒ/2.8, raised/lowered shutter fractions (1/50s,
   never 0.02 sec), and a small ISO badge with its value. Keep screen-reader labels.
+- Confirmed EXIF corrections go in data/photo-overrides.json by photo ID and take
+  precedence over source metadata. Never infer a full lens model from focal length.
+  Andrew confirmed generic 100mm Objects/Denim shots used the earlier Canon EF
+  100mm f/2.8 Macro USM (non-L); those IDs are corrected in the override file. He
+  sold it when upgrading to L IS. Keep explicit newer L IS records unchanged.
 - Do not publish GPS or serial numbers. Generated images strip embedded EXIF;
   only whitelisted display fields are rendered separately.
 - About should mention this portfolio was originally hosted by Pullfolio and link

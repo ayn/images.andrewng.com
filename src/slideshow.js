@@ -105,6 +105,7 @@ if (slideshow) {
     touch = null;
   }, { passive: true });
   slideshow.addEventListener('focusin', event => { if (event.target !== play) setPlaying(false); });
+  window.addEventListener('portfolio:help-open', () => setPlaying(false));
   document.addEventListener('visibilitychange', () => { if (document.hidden) setPlaying(false); });
   document.addEventListener('keydown', event => {
     if (document.querySelector('.viewer')?.open || event.altKey || event.ctrlKey || event.metaKey ||

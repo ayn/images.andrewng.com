@@ -1,0 +1,41 @@
+<dialog class="keyboard-help" aria-labelledby="keyboard-help-title">
+  <header class="keyboard-help-header">
+    <h2 id="keyboard-help-title" tabindex="-1">Keyboard shortcuts</h2>
+    <button class="close" data-help-close aria-label="Close keyboard help">Close <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false"><path d="m3 3 10 10M13 3 3 13" /></svg></button>
+  </header>
+  <table>
+    <tbody>
+      <tr><td><kbd>←</kbd> <kbd>→</kbd> <span class="key-alternative">or</span> <kbd>h</kbd> <kbd>l</kbd></td><td>Previous / next photo</td></tr>
+      <tr class="help-albums"><td><kbd>k</kbd> <kbd>j</kbd></td><td>Previous / next album</td></tr>
+      <tr><td><kbd>gg</kbd> <kbd>G</kbd></td><td>First / last photo</td></tr>
+      <tr><td><kbd>Home</kbd> <kbd>End</kbd></td><td>First / last photo</td></tr>
+      <tr><td><kbd>f</kbd></td><td>Toggle fullscreen</td></tr>
+      <tr class="help-details"><td><kbd>d</kbd></td><td>Toggle photo details</td></tr>
+      <tr><td><kbd>?</kbd></td><td>Toggle this help</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Close help / fullscreen</td></tr>
+    </tbody>
+  </table>
+  <p class="keyboard-help-note">Album shortcuts work outside fullscreen.<br />Photo details are available in fullscreen.</p>
+</dialog>
+<script>
+  import '../keyboard-help.js';
+</script>
+<style>
+  .keyboard-help { width: min(460px, calc(100vw - 40px)); max-height: calc(100svh - 40px); margin: auto; padding: 25px 30px 27px; border: 1px solid #e8e8e8; border-radius: 2px; background: #fff; color: #333; box-shadow: 0 12px 70px rgb(0 0 0 / .08); opacity: 0; transform: translateY(6px); transition: opacity 180ms ease, transform 180ms ease; }
+  .keyboard-help.is-visible { opacity: 1; transform: translateY(0); }
+  .keyboard-help::backdrop { background: rgb(255 255 255 / 0); backdrop-filter: blur(0); transition: background 180ms ease, backdrop-filter 180ms ease; }
+  .keyboard-help.is-visible::backdrop { background: rgb(255 255 255 / .8); backdrop-filter: blur(5px); }
+  :global(body:has(.keyboard-help[open])) { overflow: hidden; }
+  .keyboard-help-header { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 18px; }
+  h2 { margin: 0; font-size: 18px; font-weight: 400; letter-spacing: -.4px; outline: none; }
+  button { border: 0; background: transparent; color: #707070; font: inherit; font-size: 11px; min-height: 44px; padding: 0; cursor: pointer; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.5; }
+  td { padding: 8px 0; }
+  td:first-child { width: 47%; white-space: nowrap; }
+  kbd { display: inline-block; min-width: 22px; padding: 2px 5px; border: 1px solid #e2e2e2; border-bottom-width: 2px; border-radius: 3px; background: #fafafa; color: #555; text-align: center; font: 10px/1.5 ui-monospace, monospace; }
+  .key-alternative { margin: 0 3px; color: #707070; font-size: 10px; }
+  .keyboard-help-note { margin: 21px 0 0; font-size: 11px; line-height: 1.8; color: #707070; }
+  .keyboard-help:not(.is-fullscreen) .help-details, .keyboard-help.is-fullscreen .help-albums { opacity: .45; }
+  @media (max-width: 420px) { .keyboard-help { padding: 20px; } td:first-child { width: 48%; } kbd { min-width: 20px; padding: 2px 4px; } h2 { font-size: 17px; } }
+  @media (prefers-reduced-motion: reduce) { .keyboard-help, .keyboard-help::backdrop { transition: none; transform: none; } }
+</style>

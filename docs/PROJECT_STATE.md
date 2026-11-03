@@ -35,22 +35,30 @@ is intended to be https://images.andrewng.com.
   swipe. The user explicitly rejected the mixed-aspect-ratio grid. Photos stay
   uncropped; clicking or Enlarge opens the existing viewer. Desktop sidebar and
   mobile album navigation remain. Vi shortcuts work in both views: h/l previous/next photo,
-  j/k next/previous album, gg first photo, G last photo. Each album remembers its
-  selected photo via session storage and URL hash; fullscreen mode is preserved
-  across album switches. Initial fullscreen focus goes to the photograph rather
+  j/k next/previous album outside fullscreen, gg first photo, G last photo. Each album remembers its
+  selected photo via session storage and URL hash. j/k album switching is disabled
+  in fullscreen because page changes there felt jarring. Initial fullscreen focus goes to the photograph rather
   than outlining Close; keyboard focus indicators remain on actual controls.
   f toggles the viewer, d toggles EXIF Details in fullscreen, and Escape closes it. Exit restores image focus rather than
   the enclosing link to prevent a clipped black focus outline at the slideshow edge.
 - Slideshow and viewer paging use CSS crossfades after image decoding; viewer
   opening/closing fades too. Reduced motion skips animation. EXIF space is fixed
-  so Details never shifts the photograph. EXIF fades in/out over 650ms. Visible Flickr titles/descriptions and
+  so Details never shifts the photograph. EXIF fades in/out over 650ms. Flickr titles/descriptions are hidden.
   EXIF uses photographic ƒ aperture notation, styled shutter fractions instead of
   decimal subsecond durations, and a small ISO badge.
   Per-photo source links are removed; About carries the API acknowledgment.
+- ? opens a compact keyboard-help dialog above either view. Escape closes only
+  the help, restores focus, and preserves fullscreen. Underlying photo/album keys
+  are blocked while help is open; Tab stays native and autoplay pauses.
 - Viewer with keyboard arrows, Escape, focus restoration, swipes, responsive image
   selection, and hidden-by-default EXIF Details. Missing metadata is omitted.
 - Public-only Flickr sync with account scoping, AND tag matching, pagination,
   deduplication, safe error messages, and atomic snapshot replacement.
+- Confirmed per-photo EXIF corrections can be saved in data/photo-overrides.json.
+  Andrew confirmed the older generic 100mm shots in Objects/Denim used his Canon
+  EF 100mm f/2.8 Macro USM (non-L), which he sold when upgrading to L IS. Matching
+  photo IDs have that correction; records explicitly identifying the newer L IS
+  model are unchanged. The 2006 watch photo predates the October 2009 L IS release.
 - Public EXIF fetched from Flickr; only camera/lens/focal length/aperture/shutter/ISO
   are retained. 90 unique legacy photos have available EXIF.
 - Locally generated JPEGs with content-versioned URLs, progressive quality 88 / 4:4:4,

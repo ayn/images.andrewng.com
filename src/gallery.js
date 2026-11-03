@@ -1,6 +1,6 @@
 import { createPhotoNavigation } from './navigation.mjs';
 import { renderExif } from './exif-format.mjs';
-import { restorePhotoIndex, rememberPhoto, navigateAlbum, wantsFullscreen } from './album-navigation.mjs';
+import { restorePhotoIndex, rememberPhoto, wantsFullscreen } from './album-navigation.mjs';
 
 const navigate = createPhotoNavigation();
 const photos = [...document.querySelectorAll('[data-photo]')];
@@ -123,12 +123,6 @@ viewer.addEventListener('keydown', event => {
     event.preventDefault();
     event.stopPropagation();
     if (!detailsToggle.hidden) detailsToggle.click();
-    return;
-  }
-  if (event.key === 'j' || event.key === 'k') {
-    event.preventDefault();
-    event.stopPropagation();
-    navigateAlbum(event.key === 'j' ? 1 : -1, true);
     return;
   }
   if (event.key === 'f') { event.preventDefault(); event.stopPropagation(); closeViewer(); return; }
