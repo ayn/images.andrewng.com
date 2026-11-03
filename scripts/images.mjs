@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile, stat, readdir, rename } from 'node:fs/promi
 import { resolve, basename } from 'node:path';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
+import { readDisplayExif } from './local-photos.mjs';
 
 export const imageEdges = [640, 1280, 1920, 2560, 3840, 6144];
 const exists = async path => { try { return (await stat(path)).size > 0; } catch { return false; } };
@@ -27,7 +28,7 @@ export async function buildVariants(bytes, id, outputDirectory = resolve('public
   return sizes.sort((a, b) => a.width - b.width);
 }
 
-async function indexOriginals(dir, ids, found = new Map()) {
+export async function indexOriginals(dir, ids, found = new Map()) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     if (entry.name.startsWith('.') || entry.isSymbolicLink()) continue;
     const path = resolve(dir, entry.name);
@@ -66,12 +67,13 @@ export async function prepareImages(data) {
   await mkdir('.cache/downloads', { recursive: true });
   await mkdir('public/photos', { recursive: true });
   const photos = [...new Map(data.albums.flatMap(album => album.photos).map(photo => [photo.id, photo])).values()];
-  const originals = process.env.ORIGINALS_DIR ? await indexOriginals(resolve(process.env.ORIGINALS_DIR), photos.map(p => p.id)) : new Map();
+  const originals = await indexOriginals(resolve(process.env.ORIGINALS_DIR || 'photos/flickr-overrides'), photos.filter(photo => !photo.source).map(photo => photo.id));
   const missingOriginals = photos.filter(photo => !photo.source && !originals.has(photo.id));
   if (process.env.REQUIRE_ORIGINALS === '1' && missingOriginals.length) {
     throw new Error(`Originals are required: missing ${missingOriginals.length} source files. Set ORIGINALS_DIR to a complete Flickr source folder.`);
   }
   const manifest = {};
+  const exif = {};
   let done = 0;
   let next = 0;
   let limited = 0;
@@ -86,10 +88,12 @@ export async function prepareImages(data) {
       const nativeEdge = Math.max(metadata.width, metadata.height);
       if (nativeEdge < 3840) limited++;
       manifest[photo.id] = await buildVariants(bytes, photo.id);
+      if (photo.source || originals.has(photo.id)) exif[photo.id] = { ...photo.exif, ...await readDisplayExif(bytes) };
       if (++done % 10 === 0 || done === photos.length) console.log(`Prepared ${done}/${photos.length} photos`);
     }
   }
   await Promise.all(Array.from({ length: 4 }, worker));
   await writeFile('.cache/images.json', JSON.stringify(manifest, null, 2));
+  await writeFile('.cache/exif.json', JSON.stringify(exif, null, 2));
   console.log(`${originals.size} originals matched; ${limited} photos have source resolution below 3840px. No images were upscaled.`);
 }

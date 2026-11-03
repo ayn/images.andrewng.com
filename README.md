@@ -32,6 +32,16 @@ https://images.andrewng.com regardless of the preview hostname.
 
 ## Albums
 
+### Replace old Flickr exports
+
+Put Lightroom re-exports in `photos/flickr-overrides/<flickr-photo-id>.jpg`.
+For example, `photos/flickr-overrides/236208468.jpg` replaces https://flic.kr/p/mSCxN.
+The replacement retains all existing album memberships, title, and Flickr link.
+Its source EXIF takes precedence over Flickr's camera/exposure metadata. Filenames
+containing the ID, such as `sand-harbor_236208468.jpg`, are also supported.
+These full-resolution source files are ignored by Git. `ORIGINALS_DIR` can point
+to an external folder instead; otherwise `photos/flickr-overrides/` is the default.
+
 ### Add photographs without Flickr
 
 Put full-resolution JPEGs in `photos/selected-images`, `photos/portraits`,
@@ -110,19 +120,10 @@ npx wrangler pages deploy dist --project-name images-andrewng-com
 This requires Cloudflare authentication. Attach `images.andrewng.com` under the
 Pages project’s Custom domains before directing DNS there.
 
-Alternatively, connect this GitHub repo to Cloudflare Pages with:
-
-| Setting | Value |
-| --- | --- |
-| Root directory | Repository root |
-| Framework | Astro |
-| Build command | `npm run build` |
-| Output | `dist` |
-| Environment | `NODE_VERSION=24`, `FLICKR_API_KEY` |
-
-Git builds can fetch Flickr’s available image sizes. They cannot access local
-originals. To keep high-resolution production images, build/upload locally or
-provide originals through a separate storage integration before enabling Git builds.
+Production deployment runs on the Mac, where the source JPEGs live. GitHub Actions
+only builds the public Flickr snapshot and runs tests for PR validation; it does
+not deploy. Do not enable Cloudflare automatic Git deployments for this project.
+A clean checkout cannot access the local originals until you restore them.
 
 Rebuild after changing Flickr tags or visibility. A deployed snapshot remains
 public until replaced, including photos subsequently made private on Flickr.
@@ -132,7 +133,7 @@ No scheduled job or production Cloudflare deployment is provisioned by this repo
 
 ## Public repository / private build inputs
 
-Only code and public album metadata belong in Git. `.env`, downloaded photos,
+Only code and public album metadata belong in Git. Source photographs are not committed. `.env`, downloaded photos,
 originals, generated variants, build output, and caches are ignored. Put the API
 key in `.env` locally and in Cloudflare environment settings for hosted builds.
 Never put credentials in `site.config.mjs` or client JavaScript.
