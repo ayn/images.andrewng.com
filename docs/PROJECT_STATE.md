@@ -23,8 +23,8 @@ is intended to be https://images.andrewng.com.
 
 - Browser/social titles use Andrew Ng Images — <album>. The header no longer
   shows a redundant photo total. The repeated main album heading is visually hidden
-  on desktop, with the extra space given to the photo; About also hides its repeated
-  heading on desktop. Mobile keeps its headings. Footer copyright updates in browser JavaScript.
+  at every screen size, with the extra space given to the photo; About also hides
+  its repeated heading. The underlined navigation link identifies the active page. Footer copyright updates in browser JavaScript.
 - About links to the source repository, not the personal GitHub profile. Flickr
   profile link removed. Instagram SVG links in navigation and About point to the
   confirmed profile @ayn: https://www.instagram.com/ayn/.
@@ -117,13 +117,21 @@ Astro dev was verified listening on `*:4327`; an HTTP request through its Tailsc
 IP with the requested hostname returned 200. Preview URL:
 http://aynstudio.tail23b3c.ts.net:4327
 
-Browser automation was unavailable (`CUA_REPL_ENABLED_SURFACES is required`), so
-full visual/browser interaction QA has not been performed. Build, image processing,
-tests, HTTP routes, and listener binding have been checked.
+The computer-use browser connector is unavailable, but the final design pass
+was reviewed with isolated headless Chrome via temporary Playwright tooling
+outside the repository. Screenshots covered 320px and 390px phones, 768px tablet,
+844×390 landscape, 1440px desktop, and 2560px desktop. Browser checks covered
+keyboard edge navigation, help/Escape behavior, fixed EXIF geometry, fullscreen
+return visibility, native horizontal touch paging, swipe-down dismissal, and
+visibility of the selected album in the mobile strip. No JavaScript errors or
+horizontal page overflow were observed. Physical iOS/Safari QA remains useful.
 
 Production deployment is explicitly **Mac-driven**, not GitHub Actions-driven.
 Actions only validates PR builds/tests and must not publish the site.
 Cloudflare Pages production deployment/custom domain/DNS have **not** been configured.
+Andrew paused deployment for a final design pass; wait for his instruction to
+resume. Wrangler’s saved session failed to refresh and needs a new login. A login
+flow was started then cancelled when deployment was paused.
 Build locally and upload `dist/` if using local originals. Do not enable cloud Git
 builds for high-resolution sources until originals can be accessed securely there.
 
@@ -139,12 +147,25 @@ is set, prepares photos, then builds Astro. `npm test` expects generated pages t
 exist. CI uses the saved public metadata without credentials. The source originals
 are deliberately absent from GitHub, so restoring them is required on a fresh machine.
 
-Remaining work: visually review the design on desktop/mobile and configure/deploy
-Cloudflare Pages when requested. Keep the existing framed photos as-is; re-exporting
-legacy sources is not a pending task.
+Remaining work: Andrew’s final design review, optional physical iOS/Safari QA,
+and Cloudflare authentication/setup/deployment when requested. Keep the existing
+framed photos as-is; re-exporting legacy sources is not a pending task.
 
 Framed-photo audit: all 101 unique images reviewed in contact sheets; nine visible
 baked-in frames, all in Objects. Capture-time/replacement checklist lives in
 `docs/framed-photo-replacements.md`. Exit restores the inline photo before closing
 the dialog synchronously, escaping native-scroll clipping during the morph and
 keeping scrollbar space stable to avoid a final blink or layout shift.
+
+## Final design pass
+
+The presentation keeps its white gallery/slideshow structure. A restrained serif
+identity now matches the About heading and OG card, with system Avenir Next UI
+text and clearer muted control contrast. Previous/next controls use the same
+drawn SVG in both views. Mobile albums use one native scrolling row; the current
+album is brought into view on load. Repeated album/About headings are hidden on
+mobile too, per Andrew’s request; accessible h1s remain. The mobile gallery fits its controls inside
+the viewport, and short landscape windows use compact sidebar spacing. About
+links and typography have tighter, consistent spacing. Astro’s development
+toolbar is disabled for clean previewing. Photo content, frames, EXIF privacy,
+and existing navigation/motion behavior remain intact.

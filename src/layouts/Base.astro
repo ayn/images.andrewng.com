@@ -56,6 +56,13 @@ const documentTitle = `Andrew Ng Images — ${title}`;
     <KeyboardHelp />
     <script>
       import "../copyright.js";
+      const albumNav = document.querySelector('nav[aria-label="Albums"]');
+      const selectedAlbum = albumNav?.querySelector('[aria-current="page"]');
+      if (albumNav && selectedAlbum && window.matchMedia('(max-width: 600px)').matches) {
+        const navRect = albumNav.getBoundingClientRect();
+        const selectedRect = selectedAlbum.getBoundingClientRect();
+        albumNav.scrollLeft += selectedRect.left - navRect.left - (navRect.width - selectedRect.width) / 2;
+      }
     </script>
   </body>
 </html>

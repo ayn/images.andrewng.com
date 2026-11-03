@@ -1,5 +1,6 @@
 ---
 import ExternalArrow from './ExternalArrow.astro';
+import PhotoArrow from './PhotoArrow.astro';
 const { album } = Astro.props;
 ---
 {album.photos.length ? <section class="slideshow" aria-roledescription="carousel" aria-label={`${album.title} photographs`}>
@@ -24,9 +25,9 @@ const { album } = Astro.props;
   </div>
   <div class="slideshow-controls" hidden>
     <div class="slide-pagination">
-      <button data-slide-previous aria-label="Previous photograph">←</button>
+      <button data-slide-previous aria-label="Previous photograph"><PhotoArrow previous /></button>
       <span data-slide-count aria-live="polite" aria-atomic="true">01 / {String(album.photos.length).padStart(2, '0')}</span>
-      <button data-slide-next aria-label="Next photograph">→</button>
+      <button data-slide-next aria-label="Next photograph"><PhotoArrow /></button>
     </div>
     <div class="slide-actions"><button data-slide-play aria-pressed="false">Play</button><button data-slide-enlarge>Enlarge <ExternalArrow /></button></div>
   </div>
