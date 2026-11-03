@@ -46,10 +46,10 @@ The first run downloads the available photos and generates image variants.
 Later runs reuse the local cache. The preview hides Astro’s developer toolbar
 so it shows the actual design. The dev server binds to **0.0.0.0:4327**, so it is reachable on the machine’s network interfaces, including Tailscale:
 
-http://aynstudio.tail23b3c.ts.net:4327
+http://YOUR_PREVIEW_HOST:4327
 
-No Tailscale Serve or Funnel setup is needed. Only this hostname, localhost, and
-IP addresses are allowed by the dev server’s host check. Production URLs use
+No Tailscale Serve or Funnel setup is needed. Set `DEV_ALLOWED_HOSTS` in ignored `.env` to your actual preview hostname.
+Localhost, IP addresses, and those configured names pass the host check. Production URLs use
 https://images.andrewng.com regardless of the preview hostname.
 
 ## Albums
@@ -196,3 +196,16 @@ Never put credentials in `site.config.mjs` or client JavaScript.
 
 Canonical URLs, social previews, sitemap, robots.txt, and a 404 page are generated
 by Astro. The Rails application is separate and is not needed to run this site.
+
+
+## Public-repository hygiene
+
+GitHub secret scanning and push protection are enabled. CI also runs Gitleaks
+against Git history. Keep API keys and private preview hostnames in ignored
+`.env`, and use the GitHub noreply address for commits to this public repo.
+The deliberate public identity is Andrew Ng, @ayn, and the portfolio/source URLs.
+
+Documentation-only commits may use `[skip ci] [skip deploy]`. GitHub recognizes
+`[skip ci]`; `[skip deploy]` is an instruction for the manual Mac deployment
+workflow, not a Cloudflare/GitHub Actions feature. No automated deploy exists.
+Code, image-pipeline, and configuration changes still require build/tests and CI.
