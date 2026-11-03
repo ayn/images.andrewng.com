@@ -15,7 +15,7 @@ Albums show one uncropped photograph at a time. Use previous/next, arrow keys,
 when browsing manually or leaving the tab. Click the photo or Enlarge for the
 fullscreen viewer; `f` toggles it and Escape closes it. Paging and viewer entry/exit
 use gentle fades with reduced-motion support. Each album remembers its selected
-photo in this tab; switching away and back restores it, including fullscreen mode. EXIF stays behind Details in a fixed
+photo in this tab; switching away and back restores it, including fullscreen mode. EXIF stays behind Details (or d in fullscreen) in a fixed
 space so the photograph never moves when toggled.
 
 ## Develop

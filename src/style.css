@@ -137,3 +137,8 @@ body:has(.viewer[open]) { overflow: hidden; }
 
 .close { display: inline-flex; align-items: center; gap: 12px; line-height: 1; }
 .close svg { display: block; flex: none; }
+
+.instagram-link { width: 40px; height: 40px; justify-content: flex-start; }
+.instagram-link-with-text { width: auto; height: auto; min-height: 32px; }
+.about-links > a { display: inline-flex; align-items: center; min-height: 32px; }
+@media (max-width: 600px) { .secondary { align-items: center; gap: 18px; } }

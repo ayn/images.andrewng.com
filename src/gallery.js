@@ -119,6 +119,12 @@ viewer.addEventListener('close', () => {
 window.addEventListener('resize', () => { if (viewer.open && !closing) show(current, false); });
 viewer.addEventListener('keydown', event => {
   if (closing || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+  if (event.key === 'd') {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!detailsToggle.hidden) detailsToggle.click();
+    return;
+  }
   if (event.key === 'j' || event.key === 'k') {
     event.preventDefault();
     event.stopPropagation();

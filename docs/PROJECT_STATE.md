@@ -39,7 +39,7 @@ is intended to be https://images.andrewng.com.
   selected photo via session storage and URL hash; fullscreen mode is preserved
   across album switches. Initial fullscreen focus goes to the photograph rather
   than outlining Close; keyboard focus indicators remain on actual controls.
-  f toggles the viewer and Escape closes it. Exit restores image focus rather than
+  f toggles the viewer, d toggles EXIF Details in fullscreen, and Escape closes it. Exit restores image focus rather than
   the enclosing link to prevent a clipped black focus outline at the slideshow edge.
 - Slideshow and viewer paging use CSS crossfades after image decoding; viewer
   opening/closing fades too. Reduced motion skips animation. EXIF space is fixed
