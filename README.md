@@ -15,7 +15,9 @@ Albums show one uncropped photograph at a time. Use previous/next, arrow keys,
 when browsing manually or leaving the tab. Click the photo or Enlarge for the
 fullscreen viewer; `f` toggles it and Escape closes it. Paging and viewer entry/exit
 use gentle fades with reduced-motion support. Each album remembers its selected
-photo in this tab; switching away and back restores it, including fullscreen mode. EXIF stays behind Details (or d in fullscreen) in a fixed
+photo in this tab; switching away and back restores it. Album switching with j/k
+is disabled in fullscreen to avoid disruptive page changes. Press ? for keyboard
+help; Escape dismisses help before leaving the viewer. EXIF stays behind Details (or d in fullscreen) in a fixed
 space so the photograph never moves when toggled.
 
 ## Develop
@@ -82,6 +84,21 @@ use `data/albums.json`. `npm run sync` refreshes metadata using an exported shel
 variable; `node --env-file=.env scripts/sync.mjs` also loads the local file.
 Failed API calls abort the build rather than publishing incomplete albums. A sync
 writes the snapshot only after all five searches succeed.
+
+## Correct missing EXIF
+
+`data/photo-overrides.json` stores confirmed per-photo corrections. Use the photo ID
+from the current page's `#photo=...` URL, for example:
+
+```json
+{ "photo-id": { "lens": "Your confirmed lens model" } }
+```
+
+Allowed fields: camera, lens, focalLength, aperture, shutter, iso. Corrections win
+over Flickr and source EXIF, survive metadata refreshes, and apply in every album
+containing that photo. Unknown IDs and private metadata fields fail the build.
+Never infer a full lens model from focal length alone; some old exports only store
+generic labels like `100.0 mm`.
 
 ## Resolution and originals
 

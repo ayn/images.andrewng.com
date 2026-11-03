@@ -9,13 +9,12 @@ export function selectedPhotoIndex(ids, hash = '', savedId = null) {
   return 0;
 }
 
-export function albumDestination(paths, currentPath, direction, remembered = {}, fullscreen = false) {
+export function albumDestination(paths, currentPath, direction, remembered = {}) {
   const current = paths.indexOf(currentPath);
   if (current < 0 || !paths.length) return null;
   const path = paths[(current + direction + paths.length) % paths.length];
   const params = new URLSearchParams();
   if (remembered[path]) params.set('photo', remembered[path]);
-  if (fullscreen) params.set('view', 'full');
   return path + (params.size ? `#${params}` : '');
 }
 
@@ -39,10 +38,10 @@ export function rememberPhoto(id, { fullscreen } = {}) {
   try { history.replaceState(history.state, '', url); } catch { /* Navigation remains usable without history writes. */ }
 }
 
-export function navigateAlbum(direction, fullscreen = false) {
+export function navigateAlbum(direction) {
   const paths = [...document.querySelectorAll('nav[aria-label="Albums"] a')].map(link => new URL(link.href).pathname);
   const remembered = Object.fromEntries(paths.map(path => [path, savedPhoto(path)]));
-  const destination = albumDestination(paths, location.pathname, direction, remembered, fullscreen);
+  const destination = albumDestination(paths, location.pathname, direction, remembered);
   if (destination) location.assign(destination);
 }
 
