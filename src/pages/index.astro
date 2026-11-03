@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import Gallery from '../components/Gallery.astro';
+import { loadPortfolio } from '../lib/data.mjs';
+const { albums } = await loadPortfolio();
+const album = albums.find(album => album.slug === 'selected-images');
+---
+<Base title={album.title} active={album.slug} image={album.photos[0]?.sizes.at(-1).src} count={album.photos.length}>
+  <Gallery album={album} />
+</Base>

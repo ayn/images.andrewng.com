@@ -1,0 +1,14 @@
+dist/
+.env
+.env.*
+!.env.example
+node_modules/
+.wrangler/
+.astro/
+.cache/
+public/photos/
+originals/
+photos/**
+!photos/**/
+!photos/**/.gitkeep
+!photos/README.md

@@ -1,0 +1,19 @@
+---
+const { album } = Astro.props;
+---
+{album.photos.length ? <div class="gallery">
+  {album.photos.map((photo, index) => {
+    const largest = photo.sizes.at(-1);
+    const preview = photo.sizes.find(size => Math.max(size.width, size.height) >= 640) || largest;
+    return <a class="photograph" href={photo.href || largest.src} data-photo data-full={largest.src} data-flickr={photo.href || ''}
+      data-width={largest.width} data-height={largest.height} data-title={photo.title}
+      data-srcset={photo.sizes.map(size => `${size.src} ${size.width}w`).join(', ')}
+      data-exif={JSON.stringify(photo.exif || {})}
+      aria-label={`Open ${photo.title}`}>
+      <img src={preview.src} srcset={photo.sizes.map(size => `${size.src} ${size.width}w`).join(', ')}
+        sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1000px) calc((100vw - 240px) / 2), (max-width: 1500px) calc((100vw - 310px) / 2), 575px"
+        width={largest.width} height={largest.height} alt={photo.title}
+        loading={index < 2 ? 'eager' : 'lazy'} decoding="async" fetchpriority={index === 0 ? 'high' : 'auto'} />
+    </a>;
+  })}
+</div> : <p class="empty">There are no photographs in this collection yet.</p>}
